@@ -22,9 +22,10 @@ public class MailServiceImpl implements MailService {
     public void sendOTP(String email) {
         otp = String.valueOf(this.random.nextInt(9999));
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("noreplyhelloshoes@gmail.com");
+        message.setFrom("kawishikam@gmail.com");
         message.setTo(email);
         message.setSubject("OTP");
+        otp = String.format("%04d", Integer.parseInt(otp));
         message.setText("Your OTP is " + otp);
         javaMailSender.send(message);
     }
