@@ -4,6 +4,7 @@ import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.ErrorInfoRes
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -49,5 +50,11 @@ public class ExceptionsHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorInfoResponse> handleException(UnknownHostException exception) {
         return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.CONFLICT).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorInfoResponse> handleException(Exception exception) {
+        return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

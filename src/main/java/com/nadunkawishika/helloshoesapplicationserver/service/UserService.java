@@ -9,6 +9,7 @@ public interface UserService {
     void register(RegisterRequest registerRequest);
 
     void updatePassword(RegisterRequest registerRequest);
-    ResponseEntity<LoginResponse> authenticate(LoginRequest loginRequest);
+    LoginResponse authenticate(LoginRequest loginRequest);
 
+    void forgotPassword(String email);
 }

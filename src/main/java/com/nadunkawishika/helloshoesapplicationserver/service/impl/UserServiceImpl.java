@@ -8,6 +8,7 @@ import com.nadunkawishika.helloshoesapplicationserver.entity.User;
 import com.nadunkawishika.helloshoesapplicationserver.ex.AlreadyExistException;
 import com.nadunkawishika.helloshoesapplicationserver.repository.UserRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.JWTService;
+import com.nadunkawishika.helloshoesapplicationserver.service.MailService;
 import com.nadunkawishika.helloshoesapplicationserver.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final MailService mailService;
 
     @Override
     public void register(RegisterRequest registerRequest) {
@@ -59,17 +62,28 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public ResponseEntity<LoginResponse> authenticate(LoginRequest loginRequest) {
+    public LoginResponse authenticate(LoginRequest loginRequest) {
         try {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail().toLowerCase(), loginRequest.getPassword()));
             if (authenticate.isAuthenticated()) {
                 String token = jwtService.generateToken(loginRequest.getEmail().toLowerCase());
-                return ResponseEntity.ok(LoginResponse.builder().token(token).role(authenticate.getAuthorities()).build());
+                return LoginResponse.builder().token(token).role(authenticate.getAuthorities()).build();
             } else {
                 throw new BadCredentialsException("Invalid Credentials");
             }
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException("Invalid Credentials");
+        }
+    }
+
+    @Override
+    public void forgotPassword(String email) {
+        Optional<User> byEmail = userRepository.findByEmail(email);
+        System.out.println(byEmail);
+        if (byEmail.isPresent()) {
+            mailService.sendOTP(email);
+        } else {
+            throw new UsernameNotFoundException("User does not exist");
         }
     }
 }
