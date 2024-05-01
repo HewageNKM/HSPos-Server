@@ -6,7 +6,7 @@ public class GenerateId {
     private static final Random random = new Random();
 
     public static String getId(String preFix) {
-        StringBuilder stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder(preFix);
         stringBuilder.append("-");
         stringBuilder.append(System.currentTimeMillis()); // Append current timestamp
 
