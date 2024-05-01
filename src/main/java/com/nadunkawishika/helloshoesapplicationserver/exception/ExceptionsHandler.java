@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -64,5 +65,10 @@ public class ExceptionsHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorInfoResponse> handleException(NotFoundException exception) {
         return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorInfoResponse> handleException(HttpRequestMethodNotSupportedException exception) {
+        return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.UNAUTHORIZED).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.UNAUTHORIZED);
     }
 }

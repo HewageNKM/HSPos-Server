@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 @Component
 @RequiredArgsConstructor
 public class Mapper {
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public List<SupplierDTO> toSuppliersEntityToDTOs(List<Supplier> suppliers) {
         Stream<SupplierDTO> supplierDTOStream = suppliers.stream().map(supplier -> modelMapper.map(supplier, SupplierDTO.class));

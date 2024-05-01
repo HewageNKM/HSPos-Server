@@ -14,16 +14,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "suppliers")
 public class Supplier {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private String supplierCode;
-    @Column(nullable = false, unique = true,length = 50)
+    private String supplierId;
+    @Column(nullable = false,length = 50)
     private String name;
-    @Column(nullable = false,length = 100)
+    @Column(nullable = false, length = 100)
     private String address;
     @Column(nullable = false,length = 12)
     private String contactNo1;
     @Column(nullable = false,length = 12)
     private String contactNo2;
-    @Column(nullable = false)
+    @Column(nullable = false,length = 50)
     private String email;
 }

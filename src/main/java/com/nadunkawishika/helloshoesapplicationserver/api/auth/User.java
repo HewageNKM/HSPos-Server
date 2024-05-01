@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/auth/users")
 @RequiredArgsConstructor
-@CrossOrigin
 public class User {
     private final UserService userService;
 
     @PostMapping("/login")
-    public  LoginResponse authenticate(@Validated @RequestBody LoginRequest loginRequest) {
+    public LoginResponse authenticate(@Validated @RequestBody LoginRequest loginRequest) {
         System.out.println(loginRequest.toString());
         return userService.authenticate(loginRequest);
     }

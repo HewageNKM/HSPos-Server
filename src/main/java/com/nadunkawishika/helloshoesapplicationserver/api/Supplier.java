@@ -1,17 +1,20 @@
-package com.nadunkawishika.helloshoesapplicationserver.api.auth;
+package com.nadunkawishika.helloshoesapplicationserver.api;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.SupplierDTO;
 import com.nadunkawishika.helloshoesapplicationserver.service.SupplierService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/supplier")
+@RequestMapping("/api/v1/suppliers")
 @RequiredArgsConstructor
+@CrossOrigin
+@EnableMethodSecurity(securedEnabled = true)
 public class Supplier {
     private final SupplierService supplierService;
 
@@ -25,20 +28,22 @@ public class Supplier {
         return supplierService.getSupplier(id);
     }
 
-    @PostMapping()
+    //Authorize Methods
+    @PostMapping
     @Secured("ADMIN")
-    public void addSupplier(@Validated @RequestBody SupplierDTO dto) {
-        supplierService.addSupplier(dto);
+    public void addSupplier(@Validated @RequestBody SupplierDTO supplierDTO) {
+        System.out.println(supplierDTO.toString());
+        supplierService.addSupplier(supplierDTO);
     }
 
     @PutMapping("/{id}")
     @Secured("ADMIN")
-    public void addSupplier(@PathVariable String id, @RequestBody SupplierDTO dto) {
-        supplierService.updateSupplier(id, dto);
+    public void addSupplier(@PathVariable String id, @RequestBody SupplierDTO supplierDTO) {
+        supplierService.updateSupplier(id, supplierDTO);
     }
 
-    @DeleteMapping("/{id}")
     @Secured("ADMIN")
+    @DeleteMapping("/{id}")
     public void addSupplier(@PathVariable String id) {
         supplierService.deleteSupplier(id);
     }

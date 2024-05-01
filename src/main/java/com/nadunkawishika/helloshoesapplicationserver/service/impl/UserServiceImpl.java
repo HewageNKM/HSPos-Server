@@ -10,6 +10,7 @@ import com.nadunkawishika.helloshoesapplicationserver.repository.UserRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.JWTService;
 import com.nadunkawishika.helloshoesapplicationserver.service.MailService;
 import com.nadunkawishika.helloshoesapplicationserver.service.UserService;
+import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,6 +42,7 @@ public class UserServiceImpl implements UserService {
             User user = User
                     .builder()
                     .email(registerRequest.getEmail())
+                    .id(GenerateId.getId("USR"))
                     .password(passwordEncoder.encode(registerRequest.getPassword()))
                     .role(Role.USER)
                     .build();

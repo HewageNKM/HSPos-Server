@@ -41,22 +41,22 @@ public class SupplierServiceImpl implements SupplierService {
     public void updateSupplier(String id, SupplierDTO dto) {
         Optional<Supplier> supplier = supplierRepository.findById(id);
         if (supplier.isPresent()) {
-            Supplier sup = supplier.get();
-            sup.setName(dto.getName());
-            sup.setAddress(dto.getAddress());
-            sup.setEmail(dto.getEmail());
-            sup.setContactNo1(dto.getContactNo1());
-            sup.setContactNo2(dto.getContactNo2());
-            supplierRepository.save(sup);
+            Supplier spl = supplier.get();
+            spl.setName(dto.getName());
+            spl.setAddress(dto.getAddress());
+            spl.setContactNo1(dto.getContactNo1());
+            spl.setContactNo2(dto.getContactNo2());
+            spl.setEmail(dto.getEmail());
+            supplierRepository.save(spl);
         } else {
-            throw new NotFoundException("Supplier Not Found " + id);
+            throw new NotFoundException("Supplier Not Found" + id);
         }
     }
 
     @Override
     public void addSupplier(SupplierDTO dto) {
+        dto.setSupplierId(GenerateId.getId("SUP"));
         Supplier supplier = mapper.toSupplierDTOsToSupplierEntity(dto);
-        supplier.setSupplierCode(GenerateId.getId("SUP").toLowerCase());
         supplierRepository.save(supplier);
     }
 

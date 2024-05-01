@@ -14,11 +14,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityFilter {
     private final JWTFilter jwtFilter;
     private final AuthenticationProvider authenticationProvider;
+
     // This class is used to configure the security chain filters
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

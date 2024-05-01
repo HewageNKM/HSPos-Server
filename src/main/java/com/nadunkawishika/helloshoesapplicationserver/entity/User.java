@@ -20,8 +20,7 @@ import java.util.List;
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Integer id;
+    private String id;
     @Column(nullable = false,length = 50, unique = true)
     private String email;
     @Column(nullable = false, length = 384)
