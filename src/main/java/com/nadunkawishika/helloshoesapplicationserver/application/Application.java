@@ -2,6 +2,7 @@ package com.nadunkawishika.helloshoesapplicationserver.application;
 
 import com.nadunkawishika.helloshoesapplicationserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,4 +70,8 @@ public class Application {
         return mailSender;
     }
 
+    @Bean
+    public org.modelmapper.ModelMapper getModelMapper() {
+        return new ModelMapper();
+    }
 }

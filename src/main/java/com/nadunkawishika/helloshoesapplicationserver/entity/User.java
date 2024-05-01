@@ -16,17 +16,18 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-@Entity(name = "user")
+@Entity
+@Table(name = "users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
     @Column(nullable = false,length = 50, unique = true)
     private String email;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 384)
     private String password;
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false,  length = 384)
+    @Column(nullable = false)
     private Role role;
 
     @Override

@@ -5,7 +5,7 @@ import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.LoginRespons
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.RegisterRequest;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Role;
 import com.nadunkawishika.helloshoesapplicationserver.entity.User;
-import com.nadunkawishika.helloshoesapplicationserver.ex.AlreadyExistException;
+import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.AlreadyExistException;
 import com.nadunkawishika.helloshoesapplicationserver.repository.UserRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.JWTService;
 import com.nadunkawishika.helloshoesapplicationserver.service.MailService;
@@ -19,11 +19,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

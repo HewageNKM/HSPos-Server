@@ -1,6 +1,8 @@
-package com.nadunkawishika.helloshoesapplicationserver.ex;
+package com.nadunkawishika.helloshoesapplicationserver.exception;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.ErrorInfoResponse;
+import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.AlreadyExistException;
+import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -49,12 +51,18 @@ public class ExceptionsHandler {
     @ExceptionHandler(UnknownHostException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorInfoResponse> handleException(UnknownHostException exception) {
-        return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.CONFLICT).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorInfoResponse> handleException(Exception exception) {
-        return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorInfoResponse> handleException(UsernameNotFoundException exception) {
+        return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorInfoResponse> handleException(NotFoundException exception) {
+        return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.NOT_FOUND);
     }
 }
