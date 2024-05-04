@@ -1,0 +1,19 @@
+phases:
+  env:
+    variables:
+      GMAIL: ${{ secrets.GMAIL }}
+      GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_URL: ${{ secrets.DB_URL }}
+  build:
+    commands:
+      - echo "Packing Jar Files...."
+      - mvn clean package -DskipTests
+  post_build:
+    commands:
+      - echo "Build completed on `date`"
+artifacts:
+    files:
+        - target/Hello-Shoes-Server.jar
+    discard-paths: yes
