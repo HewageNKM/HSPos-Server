@@ -105,7 +105,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>Hello-Shoes-Server</finalName>
+        <finalName>shoe-app</finalName>
     </build>
 
 </project>

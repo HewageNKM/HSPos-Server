@@ -16,5 +16,5 @@ phases:
       - echo "Build completed on `date`"
 artifacts:
   files:
-    - target/Hello-Shoes-Server.jar
+    - target/shoe-app.jar
   discard-paths: yes
