@@ -1,5 +1,4 @@
 HELP.md
-target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -34,3 +33,11 @@ build/
 .vscode/
 
 /src/main/resources/.env
+/src/main/resources/application.properties
+
+/target/classes/
+/target/generated-sources/
+/target/generated-test-sources/
+/target/maven-status/
+/target/surefire-reports/
+/target/test-classes/
