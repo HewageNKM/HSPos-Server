@@ -7,6 +7,6 @@ RUN mvn clean
 RUN mvn package -DskipTests -X
 EXPOSE 8080
 
-FROM amazoncorretto:21
+FROM openjdk
 COPY --from=build /app/target/*.jar /app/app.jar
 CMD ["java", "-jar", "/app/app.jar"]
