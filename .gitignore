@@ -41,3 +41,5 @@ build/
 /target/maven-status/
 /target/surefire-reports/
 /target/test-classes/
+/target/maven-archiver/
+/target/shoe-server-app.jar.original
