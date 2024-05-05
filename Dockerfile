@@ -1,4 +1,4 @@
-FROM maven AS build
+FROM maven:3.6.5 AS build
 WORKDIR /app
 ENV GMAIL=${GMAIL}
 ENV GMAIL_PASSWORD=${GMAIL_PASSWORD}
