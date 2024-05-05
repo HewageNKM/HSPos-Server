@@ -19,9 +19,25 @@ public class SupplierDTO {
     @Length(min = 3, max = 255, message = "Name too long or too short")
     private String name;
 
-    @NotEmpty(message = "Address Required")
-    @Length(min = 5, max = 150)
-    private String address;
+    @NotEmpty(message = "Lane is Required")
+    @Length(min = 3, max = 30)
+    private String lane;
+
+    @Length(min = 3, max = 30, message = "City too long or too short")
+    @NotEmpty(message = "City is Required")
+    private String city;
+
+    @Length(min = 3, max = 20, message = "State too long or too short")
+    @NotEmpty(message = "State is Required")
+    private String state;
+
+    @Length(min = 3, max = 10, message = "Postal Code too long or too short")
+    @NotEmpty(message = "Postal Code is Required")
+    private String postalCode;
+
+    @Length(min = 3, max = 20)
+    @NotEmpty(message = "Country is Required")
+    private String country;
 
     @NotEmpty(message = "Contact Number Required")
     @Length(min = 10, max = 12, message = "Not Validate Number")

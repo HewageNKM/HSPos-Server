@@ -3,6 +3,8 @@ package com.nadunkawishika.helloshoesapplicationserver.application;
 import com.nadunkawishika.helloshoesapplicationserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,7 +63,6 @@ public class Application {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        System.out.println("Gmail:" + userName + " Password:" + password);
         mailSender.setUsername(userName);
         mailSender.setPassword(password);
         Properties props = mailSender.getJavaMailProperties();

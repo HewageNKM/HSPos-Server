@@ -3,6 +3,8 @@ package com.nadunkawishika.helloshoesapplicationserver.api;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SupplierDTO;
 import com.nadunkawishika.helloshoesapplicationserver.service.SupplierService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
@@ -17,14 +19,17 @@ import java.util.List;
 @EnableMethodSecurity(securedEnabled = true)
 public class Supplier {
     private final SupplierService supplierService;
+    private final Logger LOGGER = LoggerFactory.getLogger(Supplier.class);
 
     @GetMapping
     public List<SupplierDTO> getSuppliers() {
+        LOGGER.info("Get Suppliers Request");
         return supplierService.getSuppliers();
     }
 
     @GetMapping("/{id}")
     public SupplierDTO getSupplier(@PathVariable String id) {
+        LOGGER.info("Get Supplier Request: {}", id);
         return supplierService.getSupplier(id);
     }
 
@@ -32,19 +37,21 @@ public class Supplier {
     @PostMapping
     @Secured("ADMIN")
     public void addSupplier(@Validated @RequestBody SupplierDTO supplierDTO) {
-        System.out.println(supplierDTO.toString());
+        LOGGER.info("Add Supplier Request: {}", supplierDTO);
         supplierService.addSupplier(supplierDTO);
     }
 
     @PutMapping("/{id}")
     @Secured("ADMIN")
     public void addSupplier(@PathVariable String id, @RequestBody SupplierDTO supplierDTO) {
+        LOGGER.info("Update Supplier Request: {}", supplierDTO);
         supplierService.updateSupplier(id, supplierDTO);
     }
 
     @Secured("ADMIN")
     @DeleteMapping("/{id}")
     public void addSupplier(@PathVariable String id) {
+        LOGGER.info("Delete Supplier Request: {}", id);
         supplierService.deleteSupplier(id);
     }
 }

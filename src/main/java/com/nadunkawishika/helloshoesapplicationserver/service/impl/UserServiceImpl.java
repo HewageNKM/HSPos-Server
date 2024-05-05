@@ -12,6 +12,8 @@ import com.nadunkawishika.helloshoesapplicationserver.service.MailService;
 import com.nadunkawishika.helloshoesapplicationserver.service.UserService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,12 +33,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
-
+    private final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     @Override
     public void register(RegisterRequest registerRequest) {
         Optional<User> byEmail = userRepository.findByEmail(registerRequest.getEmail().toLowerCase());
-        System.out.println(byEmail);
         if (byEmail.isPresent()) {
+            LOGGER.error("Email already exists");
             throw new AlreadyExistException("Email already exists");
         } else {
             User user = User
@@ -47,6 +49,7 @@ public class UserServiceImpl implements UserService {
                     .role(Role.USER)
                     .build();
             userRepository.save(user);
+            LOGGER.info("User Registered: {}", user);
             ResponseEntity.ok();
         }
     }
@@ -58,7 +61,9 @@ public class UserServiceImpl implements UserService {
             User user = byEmail.get();
             user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
             userRepository.save(user);
+            LOGGER.info("Password Updated: {}", user);
         } else {
+            LOGGER.error("Email does not exist");
             throw new AlreadyExistException("Email does not exist");
         }
     }
@@ -71,11 +76,15 @@ public class UserServiceImpl implements UserService {
             Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail().toLowerCase(), loginRequest.getPassword()));
             if (authenticate.isAuthenticated()) {
                 String token = jwtService.generateToken(loginRequest.getEmail().toLowerCase());
+                LOGGER.info("User Authenticated: {}", loginRequest.getEmail().toLowerCase());
+                LOGGER.info("Token: {}", token);
                 return LoginResponse.builder().token(token).role(authenticate.getAuthorities()).build();
             } else {
+                LOGGER.error("Invalid Credentials");
                 throw new BadCredentialsException("Invalid Credentials");
             }
-        } catch (BadCredentialsException e) {
+        } catch (Exception e) {
+            LOGGER.error(e.getLocalizedMessage().toUpperCase());
             throw new BadCredentialsException("Invalid Credentials");
         }
     }
@@ -83,10 +92,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void forgotPassword(String email) {
         Optional<User> byEmail = userRepository.findByEmail(email);
-        System.out.println(byEmail);
+
         if (byEmail.isPresent()) {
+            LOGGER.info("Sending OTP to: {}", email);
             mailService.sendOTP(email);
         } else {
+            LOGGER.error("User does not exist");
             throw new UsernameNotFoundException("User does not exist");
         }
     }

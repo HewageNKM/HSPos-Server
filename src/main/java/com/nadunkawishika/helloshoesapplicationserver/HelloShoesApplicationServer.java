@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 @SpringBootApplication
-@EnableMethodSecurity
 public class HelloShoesApplicationServer {
     public static void main(String[] args) {
         SpringApplication.run(HelloShoesApplicationServer.class, args);
