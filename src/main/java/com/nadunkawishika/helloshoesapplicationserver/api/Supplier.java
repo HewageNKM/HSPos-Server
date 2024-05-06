@@ -22,9 +22,15 @@ public class Supplier {
     private final Logger LOGGER = LoggerFactory.getLogger(Supplier.class);
 
     @GetMapping
-    public List<SupplierDTO> getSuppliers() {
+    public List<SupplierDTO> getSuppliers(@RequestParam(required = false) String pattern) {
         LOGGER.info("Get Suppliers Request");
-        return supplierService.getSuppliers();
+        if (pattern == null) {
+            LOGGER.info("Get All Suppliers Request");
+            return supplierService.getSuppliers();
+        } else {
+            LOGGER.info("Filter Suppliers Request: {}", pattern);
+            return supplierService.filterSuppliers(pattern);
+        }
     }
 
     @GetMapping("/{id}")

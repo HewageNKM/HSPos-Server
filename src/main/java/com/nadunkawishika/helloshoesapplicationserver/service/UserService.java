@@ -7,9 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface UserService {
     void register(RegisterRequest registerRequest);
-
     void updatePassword(RegisterRequest registerRequest);
     LoginResponse authenticate(LoginRequest loginRequest);
-
     void forgotPassword(String email);
 }

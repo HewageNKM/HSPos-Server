@@ -7,12 +7,9 @@ import java.util.List;
 
 public interface SupplierService {
     List<SupplierDTO> getSuppliers();
-
     SupplierDTO getSupplier(String id);
-
+    List<SupplierDTO> filterSuppliers(String pattern);
     void updateSupplier(String id, SupplierDTO dto);
-
     void addSupplier(SupplierDTO dto);
-
     void deleteSupplier(String id);
 }

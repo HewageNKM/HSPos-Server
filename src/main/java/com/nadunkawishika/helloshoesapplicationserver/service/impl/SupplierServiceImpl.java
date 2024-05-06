@@ -42,19 +42,28 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     @Override
+    public List<SupplierDTO> filterSuppliers(String pattern) {
+        pattern = pattern.toLowerCase();
+        LOGGER.info("Filter Suppliers Request: {}", pattern);
+        List<Supplier> suppliers = supplierRepository.filterByPattern(pattern);
+        LOGGER.info("Filtered Suppliers: {}", suppliers);
+        return mapper.toSuppliersEntityToDTOs(suppliers);
+    }
+
+    @Override
     public void updateSupplier(String id, SupplierDTO dto) {
         Optional<Supplier> supplier = supplierRepository.findById(id);
         if (supplier.isPresent()) {
             Supplier spl = supplier.get();
-            spl.setName(dto.getName());
-            spl.setLane(dto.getLane());
-            spl.setCity(dto.getCity());
-            spl.setState(dto.getState());
+            spl.setName(dto.getName().toLowerCase());
+            spl.setLane(dto.getLane().toLowerCase());
+            spl.setCity(dto.getCity().toLowerCase());
+            spl.setState(dto.getState().toLowerCase());
             spl.setPostalCode(dto.getPostalCode());
-            spl.setCountry(dto.getCountry());
+            spl.setCountry(dto.getCountry().toLowerCase());
             spl.setContactNo1(dto.getContactNo1());
             spl.setContactNo2(dto.getContactNo2());
-            spl.setEmail(dto.getEmail());
+            spl.setEmail(dto.getEmail().toLowerCase());
             supplierRepository.save(spl);
             LOGGER.info("Supplier Updated: {}", spl);
         } else {
@@ -66,7 +75,19 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public void addSupplier(SupplierDTO dto) {
         dto.setSupplierId(GenerateId.getId("SUP").toLowerCase());
-        Supplier supplier = mapper.toSupplierDTOsToSupplierEntity(dto);
+        Supplier supplier = Supplier.
+                builder()
+                .supplierId(dto.getSupplierId())
+                .name(dto.getName().toLowerCase())
+                .lane(dto.getLane().toLowerCase())
+                .city(dto.getCity().toLowerCase())
+                .state(dto.getState().toLowerCase())
+                .postalCode(dto.getPostalCode())
+                .country(dto.getCountry().toLowerCase())
+                .contactNo1(dto.getContactNo1())
+                .contactNo2(dto.getContactNo2())
+                .email(dto.getEmail().toLowerCase())
+                .build();
         supplierRepository.save(supplier);
         LOGGER.info("Supplier Added: {}", supplier);
     }
