@@ -1,8 +1,6 @@
 package com.nadunkawishika.helloshoesapplicationserver.dto;
 
 import com.nadunkawishika.helloshoesapplicationserver.entity.Level;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -19,7 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class CustomerDTO {
-    private String id;
+    private String customerId;
 
     @NotEmpty(message = "Name is required")
     @Length(min = 3, max = 50, message = "Name must be between 3 and 30 characters")

@@ -95,7 +95,7 @@ public class CustomerServiceImpl implements CustomerService {
         String id = GenerateId.getId("CUST").toLowerCase();
         Customer customer = Customer
                 .builder()
-                .id(id)
+                .customerId(id)
                 .name(dto.getName().toLowerCase())
                 .lane(dto.getLane().toLowerCase())
                 .city(dto.getCity().toLowerCase())
@@ -124,10 +124,5 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomer(String id) {
         customerRepository.deleteById(id);
-    }
-
-    @Override
-    public List<CustomerDTO> filterCustomer(String pattern) {
-        return modelMapper.toCustomersEntityToDTOs(customerRepository.filterCustomers(pattern.toLowerCase()));
     }
 }

@@ -16,6 +16,4 @@ public interface CustomerService {
     void addCustomer(CustomerDTO dto);
 
     void deleteCustomer(String id);
-
-    List<CustomerDTO> filterCustomer(String pattern);
 }
