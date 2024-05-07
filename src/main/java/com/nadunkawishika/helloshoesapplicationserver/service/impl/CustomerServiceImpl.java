@@ -10,7 +10,6 @@ import com.nadunkawishika.helloshoesapplicationserver.service.CustomerService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import com.nadunkawishika.helloshoesapplicationserver.util.Mapper;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
     private final Mapper modelMapper = new Mapper();
+
     public List<CustomerDTO> getCustomers() {
         return modelMapper.toCustomersEntityToDTOs(customerRepository.findAll());
     }
@@ -47,12 +47,12 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void updateCustomer(String id, CustomerDTO dto) {
-        if(customerRepository.findByContact(dto.getContact()).isPresent()){
+        if (customerRepository.findByContact(dto.getContact()).isPresent()) {
             LOGGER.error("Contact Already Exists: {}", dto.getContact());
             throw new AlreadyExistException("Contact Already Exists");
         }
 
-        if(customerRepository.findByEmail(dto.getEmail()).isPresent()){
+        if (customerRepository.findByEmail(dto.getEmail()).isPresent()) {
             LOGGER.error("Email Already Exists: {}", dto.getEmail());
             throw new AlreadyExistException("Email Already Exists");
         }
@@ -124,5 +124,10 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomer(String id) {
         customerRepository.deleteById(id);
+    }
+
+    @Override
+    public List<CustomerDTO> filterCustomer(String pattern) {
+        return modelMapper.toCustomersEntityToDTOs(customerRepository.filterCustomers(pattern.toLowerCase()));
     }
 }
