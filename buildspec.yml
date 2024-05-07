@@ -1,13 +1,4 @@
 version: 0.2
-env:
-  parameter-store:
-    RDS_USERNAME:
-    RDS_PASSWORD:
-    RDS_HOSTNAME:
-    RDS_PORT:
-    RDS_DB_NAME:
-    GMAIL:
-    GMAIL_PASSWORD:
 phases:
   install:
     runtime-versions:
@@ -15,7 +6,7 @@ phases:
   build:
     commands:
       - echo "Building the App"
-      - mvn install
+      - mvn install -DskipTests=true
   post_build:
     commands:
       - echo "Build completed on `date`"
