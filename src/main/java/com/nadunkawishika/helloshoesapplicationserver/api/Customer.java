@@ -5,6 +5,7 @@ import com.nadunkawishika.helloshoesapplicationserver.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,18 +38,21 @@ public class Customer {
         return customerService.getCustomer(id);
     }
 
+    //Authorize Methods
+    @Secured("ADMIN")
     @PostMapping
     public void addCustomer(@Validated @RequestBody CustomerDTO customerDTO) {
         LOGGER.info("Add Customer Request: {}", customerDTO);
         customerService.addCustomer(customerDTO);
     }
-
+    @Secured("ADMIN")
     @PutMapping("/{id}")
     public void updateCustomer(@PathVariable String id, @RequestBody CustomerDTO customerDTO) {
         LOGGER.info("Update Customer Request: {}", customerDTO);
         customerService.updateCustomer(id, customerDTO);
     }
 
+    @Secured("ADMIN")
     @DeleteMapping("/{id}")
     public void deleteCustomer(@PathVariable String id) {
         LOGGER.info("Delete Customer Request: {}", id);
