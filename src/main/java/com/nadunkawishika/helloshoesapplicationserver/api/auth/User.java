@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth/users")
+@RequestMapping("/auth/users")
 @RequiredArgsConstructor
 public class User {
     private final UserService userService;

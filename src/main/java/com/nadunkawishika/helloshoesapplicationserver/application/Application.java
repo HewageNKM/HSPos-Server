@@ -63,6 +63,9 @@ public class Application {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
+       /* String userName = System.getenv("GMAIL");
+        String password = System.getenv("GMAIL_PASSWORD");*/
+
         mailSender.setUsername(userName);
         mailSender.setPassword(password);
         Properties props = mailSender.getJavaMailProperties();
