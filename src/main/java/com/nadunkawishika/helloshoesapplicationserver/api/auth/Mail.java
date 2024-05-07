@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth/mail")
+@RequestMapping("/auth/mail")
 @CrossOrigin
 @RequiredArgsConstructor
 public class Mail {
