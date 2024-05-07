@@ -1,0 +1,24 @@
+version: 0.2
+env:
+  parameter-store:
+    RDS_USERNAME:
+    RDS_PASSWORD:
+    RDS_HOSTNAME:
+    RDS_PORT:
+    RDS_DB_NAME:
+    GMAIL:
+    GMAIL_PASSWORD:
+phases:
+  install:
+    runtime-versions:
+      java: corretto21
+  build:
+    commands:
+      - echo "Building the App"
+      - mvn install
+  post_build:
+    commands:
+      - echo "Build completed on `date`"
+artifacts:
+  files:
+    -target/shoe-sever-app.jar
