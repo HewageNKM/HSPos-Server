@@ -59,11 +59,11 @@ public class Application {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
 
-        String userName = System.getenv("GMAIL");
-        String password = System.getenv("GMAIL_PASSWORD");
+//        String userName = System.getenv("GMAIL");
+//        String password = System.getenv("GMAIL_PASSWORD");
 
-        mailSender.setUsername(userName);
-        mailSender.setPassword(password);
+        mailSender.setUsername("kawishikam@gmail.com");
+        mailSender.setPassword("mhwh bjyh dzzn xcvq");
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
