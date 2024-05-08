@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class Customer {
     @Id
     private String customerId;
+
     @Column(nullable = false, length = 30)
     private String name;
     @Enumerated(value = EnumType.STRING)

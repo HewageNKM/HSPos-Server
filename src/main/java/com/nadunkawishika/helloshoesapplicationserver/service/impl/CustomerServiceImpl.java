@@ -47,16 +47,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void updateCustomer(String id, CustomerDTO dto) {
-        if (customerRepository.findByContact(dto.getContact()).isPresent()) {
-            LOGGER.error("Contact Already Exists: {}", dto.getContact());
-            throw new AlreadyExistException("Contact Already Exists");
-        }
-
-        if (customerRepository.findByEmail(dto.getEmail()).isPresent()) {
-            LOGGER.error("Email Already Exists: {}", dto.getEmail());
-            throw new AlreadyExistException("Email Already Exists");
-        }
-
         customerRepository.findById(id).ifPresentOrElse(customer -> {
             customer.setName(dto.getName().toLowerCase());
             customer.setLane(dto.getLane().toLowerCase());

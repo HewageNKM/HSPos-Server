@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class Supplier {
     @Id
     private String supplierId;
+
     @Column(nullable = false,length = 50)
     private String name;
     @Column(nullable = false, length = 30)
