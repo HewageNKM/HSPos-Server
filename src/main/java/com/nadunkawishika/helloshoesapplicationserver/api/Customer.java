@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("/api/v1/customers")
 @CrossOrigin
 @RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true)
