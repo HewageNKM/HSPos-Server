@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity(name = "customers")
+@Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -18,7 +18,7 @@ public class Customer {
     @Id
     private String customerId;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 100)
     private String name;
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)

@@ -35,12 +35,4 @@ build/
 /src/main/resources/.env
 /src/main/resources/application.properties
 
-/target/classes/
-/target/generated-sources/
-/target/generated-test-sources/
-/target/maven-status/
-/target/surefire-reports/
-/target/test-classes/
-/target/maven-archiver/
-/target/shoe-server-app.jar.original
-/target/shoeServerApp.jar
+/target/**

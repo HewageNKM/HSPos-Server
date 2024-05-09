@@ -3,10 +3,13 @@ package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.LoginRequest;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.LoginResponse;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.RegisterRequest;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Role;
+import com.nadunkawishika.helloshoesapplicationserver.entity.Employee;
 import com.nadunkawishika.helloshoesapplicationserver.entity.User;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.AlreadyExistException;
+import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
+import com.nadunkawishika.helloshoesapplicationserver.repository.EmployeeRepository;
 import com.nadunkawishika.helloshoesapplicationserver.repository.UserRepository;
+import com.nadunkawishika.helloshoesapplicationserver.service.EmployeeService;
 import com.nadunkawishika.helloshoesapplicationserver.service.JWTService;
 import com.nadunkawishika.helloshoesapplicationserver.service.MailService;
 import com.nadunkawishika.helloshoesapplicationserver.service.UserService;
@@ -34,24 +37,37 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
+    private final JWTService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final EmployeeRepository employeeRepository;
+
     @Override
     public void register(RegisterRequest registerRequest) {
         Optional<User> byEmail = userRepository.findByEmail(registerRequest.getEmail().toLowerCase());
         if (byEmail.isPresent()) {
             LOGGER.error("Email already exists");
             throw new AlreadyExistException("Email already exists");
-        } else {
-            User user = User
-                    .builder()
-                    .email(registerRequest.getEmail())
-                    .id(GenerateId.getId("USR"))
-                    .password(passwordEncoder.encode(registerRequest.getPassword()))
-                    .role(registerRequest.getRole())
-                    .build();
-            userRepository.save(user);
-            LOGGER.info("User Registered: {}", user);
-            ResponseEntity.ok();
         }
+        Employee employee = employeeRepository.getEmployeeByEmail(registerRequest.getEmail().toLowerCase()).orElseThrow(() -> {
+            LOGGER.error("Employee does not exist");
+            return new NotFoundException("Employee does not exist");
+        });
+        User user = User
+                .builder()
+                .email(registerRequest.getEmail())
+                .id(GenerateId.getId("USR"))
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .role(registerRequest.getRole())
+                .build();
+
+        //Setting up the relationship
+        employee.setUser(user);
+        user.setEmployee(employee);
+
+        //Saving the user and employee
+        employeeRepository.save(employee);
+        userRepository.save(user);
+        LOGGER.info("User Registered");
     }
 
     @Override
@@ -60,7 +76,7 @@ public class UserServiceImpl implements UserService {
         if (byEmail.isPresent()) {
             User user = byEmail.get();
             user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-            if(registerRequest.getRole() != null) {
+            if (registerRequest.getRole() != null) {
                 user.setRole(registerRequest.getRole());
             }
             userRepository.save(user);
@@ -70,8 +86,6 @@ public class UserServiceImpl implements UserService {
             throw new AlreadyExistException("Email does not exist");
         }
     }
-    private final JWTService jwtService;
-    private final AuthenticationManager authenticationManager;
 
     @Override
     public LoginResponse authenticate(LoginRequest loginRequest) {

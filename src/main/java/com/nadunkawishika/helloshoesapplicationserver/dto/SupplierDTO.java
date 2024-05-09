@@ -16,7 +16,7 @@ public class SupplierDTO {
     private String supplierId;
 
     @NotEmpty(message = "Name Required")
-    @Length(min = 3, max = 255, message = "Name too long or too short")
+    @Length(min = 3, max = 100, message = "Name too long or too short")
     private String name;
 
     @NotEmpty(message = "Lane is Required")

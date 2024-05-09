@@ -1,6 +1,8 @@
 package com.nadunkawishika.helloshoesapplicationserver.security;
 
+import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
 import com.nadunkawishika.helloshoesapplicationserver.service.JWTService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +36,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
-            userName = jwtService.extractUsername(token);
+            try {
+                userName = jwtService.extractUsername(token);
+            } catch (ExpiredJwtException e) {
+                logger.error("JWT Token has expired");
+            }
         }
 
         if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {

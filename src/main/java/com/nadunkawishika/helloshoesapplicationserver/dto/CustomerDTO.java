@@ -20,7 +20,7 @@ public class CustomerDTO {
     private String customerId;
 
     @NotEmpty(message = "Name is required")
-    @Length(min = 3, max = 50, message = "Name must be between 3 and 30 characters")
+    @Length(min = 3, max = 100, message = "Name must be between 3 and 30 characters")
     private String name;
 
     @NotEmpty(message = "Gender is required")

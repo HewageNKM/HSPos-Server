@@ -72,10 +72,7 @@ public class ExceptionsHandler {
     public ResponseEntity<ErrorInfoResponse> handleException(HttpRequestMethodNotSupportedException exception) {
         return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.UNAUTHORIZED).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.UNAUTHORIZED);
     }
-    @ExceptionHandler(ExpiredJwtException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ResponseEntity<ErrorInfoResponse> handleException(ExpiredJwtException exception) {
-        return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.INTERNAL_SERVER_ERROR).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+
+
 }
 

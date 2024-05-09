@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-@Entity(name = "users")
+@Entity
 @Table
 public class User implements UserDetails {
     @Id
@@ -26,9 +26,14 @@ public class User implements UserDetails {
     private String email;
     @Column(nullable = false, length = 384)
     private String password;
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
+
+    @JoinColumn(name = "employee_id") // Foreign key referencing Employee table
+    @OneToOne(cascade = CascadeType.ALL)
+    private Employee employee;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
