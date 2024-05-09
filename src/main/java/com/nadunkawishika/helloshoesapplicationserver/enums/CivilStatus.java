@@ -1,4 +1,4 @@
-package com.nadunkawishika.helloshoesapplicationserver.entity;
+package com.nadunkawishika.helloshoesapplicationserver.enums;
 
 public enum CivilStatus {
     SINGLE,

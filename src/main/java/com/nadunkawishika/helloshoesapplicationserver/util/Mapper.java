@@ -36,11 +36,6 @@ public class Mapper {
         return customerDTOStream.toList();
     }
 
-    public List<Customer> toCustomerDTOsToCustomerEntity(List<CustomerDTO> customerDTOS) {
-        Stream<Customer> customerStream = customerDTOS.stream().map(customerDTO -> modelMapper.map(customerDTO, Customer.class));
-        return customerStream.toList();
-    }
-
     public List<EmployeeDTO> toEmployeesEntityToDTOs(List<Employee> employees) {
         Stream<EmployeeDTO> employeeDTOStream = employees.stream().map(employee -> modelMapper.map(employee, EmployeeDTO.class));
         return employeeDTOStream.toList();
@@ -50,8 +45,5 @@ public class Mapper {
         return modelMapper.map(employee, EmployeeDTO.class);
     }
 
-    public Employee toEmployeeDTOToEmployeeEntity(EmployeeDTO employeeDTO) {
-        return modelMapper.map(employeeDTO, Employee.class);
-    }
 }
 

@@ -2,7 +2,7 @@ package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.CustomerDTO;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Customer;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Gender;
+import com.nadunkawishika.helloshoesapplicationserver.enums.Gender;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.AlreadyExistException;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
 import com.nadunkawishika.helloshoesapplicationserver.repository.CustomerRepository;

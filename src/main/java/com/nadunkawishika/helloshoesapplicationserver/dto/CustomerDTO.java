@@ -1,6 +1,6 @@
 package com.nadunkawishika.helloshoesapplicationserver.dto;
 
-import com.nadunkawishika.helloshoesapplicationserver.entity.Level;
+import com.nadunkawishika.helloshoesapplicationserver.enums.Level;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;

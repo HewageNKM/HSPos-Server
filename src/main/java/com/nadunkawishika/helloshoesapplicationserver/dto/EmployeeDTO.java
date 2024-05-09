@@ -1,8 +1,8 @@
 package com.nadunkawishika.helloshoesapplicationserver.dto;
 
-import com.nadunkawishika.helloshoesapplicationserver.entity.CivilStatus;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Gender;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Role;
+import com.nadunkawishika.helloshoesapplicationserver.enums.CivilStatus;
+import com.nadunkawishika.helloshoesapplicationserver.enums.Gender;
+import com.nadunkawishika.helloshoesapplicationserver.enums.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 

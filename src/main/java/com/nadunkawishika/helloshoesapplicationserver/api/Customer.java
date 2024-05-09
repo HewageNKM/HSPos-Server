@@ -20,12 +20,14 @@ import java.util.List;
 public class Customer {
     private final CustomerService customerService;
     private final Logger LOGGER = LoggerFactory.getLogger(Customer.class);
+
+
     @GetMapping
     public List<CustomerDTO> getCustomers(@RequestParam(required = false) String pattern) {
         if (pattern != null) {
             LOGGER.info("Filter Customers Request: {}", pattern);
             return customerService.filterCustomers(pattern);
-        }else {
+        } else {
             LOGGER.info("Get All Customers Request");
             return customerService.getCustomers();
         }
@@ -45,6 +47,7 @@ public class Customer {
         LOGGER.info("Add Customer Request: {}", customerDTO);
         customerService.addCustomer(customerDTO);
     }
+
     @Secured("ADMIN")
     @PutMapping("/{id}")
     public void updateCustomer(@PathVariable String id, @RequestBody CustomerDTO customerDTO) {

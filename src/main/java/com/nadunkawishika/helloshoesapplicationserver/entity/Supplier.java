@@ -1,6 +1,8 @@
 package com.nadunkawishika.helloshoesapplicationserver.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +17,7 @@ public class Supplier {
     @Id
     private String supplierId;
 
-    @Column(nullable = false,length = 50)
+    @Column(nullable = false, length = 50)
     private String name;
     @Column(nullable = false, length = 30)
     private String lane;
@@ -27,10 +29,10 @@ public class Supplier {
     private String country;
     @Column(nullable = false, length = 10)
     private String postalCode;
-    @Column(nullable = false,length = 12)
+    @Column(nullable = false, length = 12)
     private String contactNo1;
-    @Column(nullable = false,length = 12)
+    @Column(nullable = false, length = 12)
     private String contactNo2;
-    @Column(nullable = false,length = 50)
+    @Column(nullable = false, length = 50)
     private String email;
 }

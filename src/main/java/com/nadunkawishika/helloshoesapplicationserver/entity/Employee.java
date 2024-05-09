@@ -1,5 +1,8 @@
 package com.nadunkawishika.helloshoesapplicationserver.entity;
 
+import com.nadunkawishika.helloshoesapplicationserver.enums.CivilStatus;
+import com.nadunkawishika.helloshoesapplicationserver.enums.Gender;
+import com.nadunkawishika.helloshoesapplicationserver.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -68,6 +71,6 @@ public class Employee {
     @Column(nullable = false, length = 12)
     private String guardingContact;
 
-    @OneToOne(mappedBy = "employee")
+    @OneToOne(mappedBy = "employee",cascade = CascadeType.ALL)
     private User user;
 }

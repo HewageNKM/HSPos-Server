@@ -47,6 +47,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void saveEmployee(String emp, MultipartFile image) throws IOException {
         EmployeeDTO dto = json.readValue(emp, EmployeeDTO.class);
+        employeeRepository.getEmployeeByEmail(dto.getEmail().toLowerCase()).ifPresent(employee -> {
+            LOGGER.error("Employee Email Exists: {}", dto.getEmail());
+            throw new NotFoundException("Employee Email Exists");
+        });
+
+        employeeRepository.getEmployeeByContact(dto.getContact()).ifPresent(employee -> {
+            LOGGER.error("Employee Contact Exists: {}", dto.getContact());
+            throw new NotFoundException("Employee Contact Exists");
+        });
         String id = GenerateId.getId("EMP");
         Employee employee = Employee
                 .builder()

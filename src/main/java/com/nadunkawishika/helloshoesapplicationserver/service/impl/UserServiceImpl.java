@@ -57,7 +57,6 @@ public class UserServiceImpl implements UserService {
                 .email(registerRequest.getEmail())
                 .id(GenerateId.getId("USR"))
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(registerRequest.getRole())
                 .build();
 
         //Setting up the relationship
@@ -76,9 +75,6 @@ public class UserServiceImpl implements UserService {
         if (byEmail.isPresent()) {
             User user = byEmail.get();
             user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-            if (registerRequest.getRole() != null) {
-                user.setRole(registerRequest.getRole());
-            }
             userRepository.save(user);
             LOGGER.info("Password Updated: {}", user);
         } else {

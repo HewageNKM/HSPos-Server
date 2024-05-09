@@ -1,5 +1,6 @@
 package com.nadunkawishika.helloshoesapplicationserver.entity;
 
+import com.nadunkawishika.helloshoesapplicationserver.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,12 +23,14 @@ public class User implements UserDetails {
     @Id
     private String id;
 
-    @Column(nullable = false,length = 50, unique = true)
+    @Column(nullable = false, length = 50, unique = true)
+    @JoinColumn(name = "email")
     private String email;
     @Column(nullable = false, length = 384)
     private String password;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @JoinColumn(name = "role")
     private Role role;
 
     @JoinColumn(name = "employee_id") // Foreign key referencing Employee table

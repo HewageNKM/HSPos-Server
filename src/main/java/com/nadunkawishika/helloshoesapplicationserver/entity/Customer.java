@@ -1,5 +1,7 @@
 package com.nadunkawishika.helloshoesapplicationserver.entity;
 
+import com.nadunkawishika.helloshoesapplicationserver.enums.Gender;
+import com.nadunkawishika.helloshoesapplicationserver.enums.Level;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
