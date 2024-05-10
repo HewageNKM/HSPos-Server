@@ -44,8 +44,8 @@ public class UserServiceImpl implements UserService {
         }
         User user = User
                 .builder()
-                .email(registerRequest.getEmail())
-                .id(GenerateId.getId("USR"))
+                .email(registerRequest.getEmail().toLowerCase())
+                .id(GenerateId.getId("USR").toLowerCase())
                 .role(registerRequest.getRole())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
