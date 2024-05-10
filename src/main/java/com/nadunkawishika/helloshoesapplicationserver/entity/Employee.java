@@ -40,7 +40,6 @@ public class Employee {
     private String attachBranch;
 
     @Enumerated(EnumType.STRING)
-    @JoinColumn(name = "role")
     private Role role;
 
     private LocalDate dob;
@@ -50,7 +49,6 @@ public class Employee {
     private String contact;
 
     @Column(nullable = false, length = 50, unique = true)
-    @JoinColumn(name = "email")
     private String email;
 
     @Column(nullable = false, length = 30)
@@ -71,6 +69,4 @@ public class Employee {
     @Column(nullable = false, length = 12)
     private String guardingContact;
 
-    @OneToOne(mappedBy = "employee",cascade = CascadeType.ALL)
-    private User user;
 }

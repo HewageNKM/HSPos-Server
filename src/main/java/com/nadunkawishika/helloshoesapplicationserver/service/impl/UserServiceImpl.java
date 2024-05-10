@@ -3,13 +3,9 @@ package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.LoginRequest;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.LoginResponse;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.RegisterRequest;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Employee;
 import com.nadunkawishika.helloshoesapplicationserver.entity.User;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.AlreadyExistException;
-import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
-import com.nadunkawishika.helloshoesapplicationserver.repository.EmployeeRepository;
 import com.nadunkawishika.helloshoesapplicationserver.repository.UserRepository;
-import com.nadunkawishika.helloshoesapplicationserver.service.EmployeeService;
 import com.nadunkawishika.helloshoesapplicationserver.service.JWTService;
 import com.nadunkawishika.helloshoesapplicationserver.service.MailService;
 import com.nadunkawishika.helloshoesapplicationserver.service.UserService;
@@ -17,7 +13,6 @@ import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +34,6 @@ public class UserServiceImpl implements UserService {
     private final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final EmployeeRepository employeeRepository;
 
     @Override
     public void register(RegisterRequest registerRequest) {
@@ -48,23 +42,13 @@ public class UserServiceImpl implements UserService {
             LOGGER.error("Email already exists");
             throw new AlreadyExistException("Email already exists");
         }
-        Employee employee = employeeRepository.getEmployeeByEmail(registerRequest.getEmail().toLowerCase()).orElseThrow(() -> {
-            LOGGER.error("Employee does not exist");
-            return new NotFoundException("Employee does not exist");
-        });
         User user = User
                 .builder()
                 .email(registerRequest.getEmail())
                 .id(GenerateId.getId("USR"))
+                .role(registerRequest.getRole())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
-
-        //Setting up the relationship
-        employee.setUser(user);
-        user.setEmployee(employee);
-
-        //Saving the user and employee
-        employeeRepository.save(employee);
         userRepository.save(user);
         LOGGER.info("User Registered");
     }

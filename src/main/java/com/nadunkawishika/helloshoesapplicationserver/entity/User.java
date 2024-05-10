@@ -30,12 +30,7 @@ public class User implements UserDetails {
     private String password;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @JoinColumn(name = "role")
     private Role role;
-
-    @JoinColumn(name = "employee_id") // Foreign key referencing Employee table
-    @OneToOne(cascade = CascadeType.ALL)
-    private Employee employee;
 
 
     @Override
