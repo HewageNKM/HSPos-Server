@@ -2,12 +2,10 @@ package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 
 import com.nadunkawishika.helloshoesapplicationserver.service.MailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Random;
 
@@ -25,9 +23,9 @@ public class MailServiceImpl implements MailService {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("kawishikam@gmail.com");
         message.setTo(email);
-        message.setSubject("OTP");
+        message.setSubject("Verify Your Identity: One-Time Password for Hello Shoes PVT LTD.");
         otp = String.format("%04d", Integer.parseInt(otp));
-        message.setText("Your OTP is " + otp);
+        message.setText(getOTPMessage(otp));
         javaMailSender.send(message);
     }
 
@@ -38,5 +36,15 @@ public class MailServiceImpl implements MailService {
         } else {
             return ResponseEntity.ok("not-verified");
         }
+    }
+
+    @Override
+    public String getOTPMessage(String otp) {
+        return "We have sent you a one-time password (OTP) to verify your identity.\n\n" +
+                "A one-time password (OTP) is a temporary code that is used for security purposes. It is typically valid for a short period of time and can only be used once. OTPs are commonly used to verify your identity when logging in to an account or making a transaction online.\n\n" +
+                "Please use the following OTP to complete your request: " +
+                otp +
+                "\n\n" +
+                "This OTP is valid for a limited time. For your security, please do not share this OTP with anyone.";
     }
 }
