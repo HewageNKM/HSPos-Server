@@ -74,7 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .image(imageUtil.encodeImage(image))
                 .attachBranch(dto.getAttachBranch().toLowerCase())
                 .guardianName(dto.getGuardianName().toLowerCase())
-                .guardingContact(dto.getGuardianContact())
+                .guardianContact(dto.getGuardianContact())
                 .contact(dto.getContact())
                 .postalCode(dto.getPostalCode())
                 .build();
@@ -102,7 +102,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             dbEmployee.setStatus(dto.getStatus());
             dbEmployee.setAttachBranch(dto.getAttachBranch().toLowerCase());
             dbEmployee.setGuardianName(dto.getGuardianName().toLowerCase());
-            dbEmployee.setGuardingContact(dto.getGuardianContact());
+            dbEmployee.setGuardianContact(dto.getGuardianContact());
             dbEmployee.setContact(dto.getContact());
             dbEmployee.setPostalCode(dto.getPostalCode());
             dbEmployee.setEmail(dto.getEmail().toLowerCase());

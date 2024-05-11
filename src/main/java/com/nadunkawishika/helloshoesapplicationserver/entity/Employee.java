@@ -67,6 +67,6 @@ public class Employee {
     private String guardianName;
 
     @Column(nullable = false, length = 12)
-    private String guardingContact;
+    private String guardianContact;
 
 }
