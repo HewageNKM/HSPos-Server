@@ -22,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -97,5 +99,15 @@ public class UserServiceImpl implements UserService {
             LOGGER.error("User does not exist");
             throw new UsernameNotFoundException("User does not exist");
         }
+    }
+
+    @Override
+    public List<RegisterRequest> getUsers() {
+        List<User> users = userRepository.findAll();
+        List<RegisterRequest> userList = new ArrayList<>();
+        for (User user:users){
+            userList.add(new RegisterRequest(user.getEmail(),null,null));
+        }
+        return userList;
     }
 }

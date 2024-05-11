@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/auth/users")
 @RequiredArgsConstructor
@@ -40,4 +42,9 @@ public class User {
         LOGGER.info("Update Password Request: {}", registerRequest);
         userService.updatePassword(registerRequest);
     }
+
+   @GetMapping
+    public List<RegisterRequest> getUsers(){
+        return userService.getUsers();
+   }
 }
