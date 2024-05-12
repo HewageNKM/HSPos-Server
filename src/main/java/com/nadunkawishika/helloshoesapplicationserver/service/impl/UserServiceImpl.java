@@ -3,8 +3,11 @@ package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.LoginRequest;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.LoginResponse;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.RegisterRequest;
+import com.nadunkawishika.helloshoesapplicationserver.entity.Employee;
 import com.nadunkawishika.helloshoesapplicationserver.entity.User;
+import com.nadunkawishika.helloshoesapplicationserver.enums.Role;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.AlreadyExistException;
+import com.nadunkawishika.helloshoesapplicationserver.repository.EmployeeRepository;
 import com.nadunkawishika.helloshoesapplicationserver.repository.UserRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.JWTService;
 import com.nadunkawishika.helloshoesapplicationserver.service.MailService;
@@ -22,6 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +39,7 @@ public class UserServiceImpl implements UserService {
     private final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
     private final JWTService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final EmployeeRepository employeeRepository;
 
     @Override
     public void register(RegisterRequest registerRequest) {
@@ -42,13 +48,23 @@ public class UserServiceImpl implements UserService {
             LOGGER.error("Email already exists");
             throw new AlreadyExistException("Email already exists");
         }
+        Employee employee = employeeRepository.getEmployeeByEmail(registerRequest.getEmail().toLowerCase()).orElseThrow(() -> {
+            LOGGER.error("Email does not exist");
+            return new AlreadyExistException("Email does not exist");
+        });
+
         User user = User
                 .builder()
                 .email(registerRequest.getEmail().toLowerCase())
                 .id(GenerateId.getId("USR").toLowerCase())
-                .role(registerRequest.getRole())
+                .role(Role.USER)
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
+
+        employee.setUser(user);
+        user.setRole(employee.getRole());
+
+        employeeRepository.save(employee);
         userRepository.save(user);
         LOGGER.info("User Registered");
     }
@@ -98,4 +114,5 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("User does not exist");
         }
     }
+
 }

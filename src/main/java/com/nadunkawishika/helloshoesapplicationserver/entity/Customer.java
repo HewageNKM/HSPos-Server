@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Customer {
     @Id
+    @Column(length = 20)
     private String customerId;
 
     @Column(nullable = false, length = 100)

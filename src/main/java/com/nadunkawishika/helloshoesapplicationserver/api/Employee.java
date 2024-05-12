@@ -21,7 +21,7 @@ public class Employee {
     private final EmployeeService employeeService;
 
     @GetMapping
-    public List<EmployeeDTO> getEmployees(@RequestParam(required = false) String pattern) {
+    public List<EmployeeDTO> getEmployees(@RequestParam(required = false,name = "pattern") String pattern) {
         if (pattern != null) {
             LOGGER.info("Filter Employee Request: {}" + pattern);
             return employeeService.filterEmployees(pattern);
@@ -40,16 +40,16 @@ public class Employee {
     // Authenticated users can access this endpoint
     @Secured("ADMIN")
     @PostMapping
-    public void saveEmployee(@RequestParam("image") MultipartFile image, @RequestPart(name = "dto") String dto) throws IOException {
+    public void saveEmployee(@RequestParam(value = "image",required = false) MultipartFile image, @RequestPart(name = "dto") String dto) throws IOException {
         LOGGER.info("Save Employee Request");
         employeeService.saveEmployee(dto, image);
     }
 
     @Secured("ADMIN")
     @PutMapping("/{id}")
-    public void updateEmployee(@PathVariable String id, @RequestPart(name = "dto") String dto, @RequestParam("image") MultipartFile image) throws IOException {
+    public void updateEmployee(@PathVariable String id, @RequestPart(name = "dto") String dto, @RequestParam(value = "image",required = false) MultipartFile image) throws IOException {
         LOGGER.info("Get Employee Request: {}" + id);
-        employeeService.getEmployee(id);
+        employeeService.updateEmployee(id,dto,image);
     }
 
     @Secured("ADMIN")

@@ -21,6 +21,4 @@ public class RegisterRequest {
     @NotEmpty(message = "Password is required")
     @Length(min = 8, message = "Password must be at least 6 characters and maximum 20characters", max = 20)
     private String password;
-
-    private Role role;
 }

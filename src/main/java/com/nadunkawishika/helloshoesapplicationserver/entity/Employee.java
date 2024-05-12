@@ -45,10 +45,10 @@ public class Employee {
     private LocalDate dob;
     private LocalDate doj;
 
-    @Column(nullable = false, length = 12, unique = true)
+    @Column(nullable = false, length = 12)
     private String contact;
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(length = 50, unique = true)
     private String email;
 
     @Column(nullable = false, length = 30)
@@ -67,6 +67,8 @@ public class Employee {
     private String guardianName;
 
     @Column(nullable = false, length = 12)
-    private String guardingContact;
+    private String guardianContact;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private User user;
 }

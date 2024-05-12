@@ -1,8 +1,6 @@
 package com.nadunkawishika.helloshoesapplicationserver.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,4 +33,5 @@ public class Supplier {
     private String contactNo2;
     @Column(nullable = false, length = 50)
     private String email;
+
 }

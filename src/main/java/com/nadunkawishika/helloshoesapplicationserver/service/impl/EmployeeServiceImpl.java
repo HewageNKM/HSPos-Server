@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -71,10 +72,10 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .designation(dto.getDesignation().toLowerCase())
                 .role(dto.getRole())
                 .status(dto.getStatus())
-                .image(imageUtil.encodeImage(image))
+                .image(image!=null ? imageUtil.encodeImage(image) : dto.getImage())
                 .attachBranch(dto.getAttachBranch().toLowerCase())
                 .guardianName(dto.getGuardianName().toLowerCase())
-                .guardingContact(dto.getGuardianContact())
+                .guardianContact(dto.getGuardianContact())
                 .contact(dto.getContact())
                 .postalCode(dto.getPostalCode())
                 .build();
@@ -90,6 +91,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         if (employee.isPresent()) {
             Employee dbEmployee = employee.get();
+
             dbEmployee.setName(dto.getName().toLowerCase());
             dbEmployee.setLane(dto.getLane().toLowerCase());
             dbEmployee.setCity(dto.getCity().toLowerCase());
@@ -102,18 +104,16 @@ public class EmployeeServiceImpl implements EmployeeService {
             dbEmployee.setStatus(dto.getStatus());
             dbEmployee.setAttachBranch(dto.getAttachBranch().toLowerCase());
             dbEmployee.setGuardianName(dto.getGuardianName().toLowerCase());
-            dbEmployee.setGuardingContact(dto.getGuardianContact());
+            dbEmployee.setGuardianContact(dto.getGuardianContact());
             dbEmployee.setContact(dto.getContact());
             dbEmployee.setPostalCode(dto.getPostalCode());
             dbEmployee.setEmail(dto.getEmail().toLowerCase());
 
             if (image != null) {
-                dto.setImage(imageUtil.encodeImage(image));
-            }else {
-                dto.setImage(dto.getImage());
+                dbEmployee.setImage(imageUtil.encodeImage(image));
             }
             employeeRepository.save(dbEmployee);
-            LOGGER.info("Employee Updated: {}", dbEmployee);
+            LOGGER.info("Employee Updated");
         } else {
             LOGGER.error("Employee Not Found: {}", id);
             throw new NotFoundException("Employee Not Found");
