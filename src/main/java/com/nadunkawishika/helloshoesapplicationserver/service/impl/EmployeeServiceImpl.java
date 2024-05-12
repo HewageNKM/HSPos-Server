@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +72,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .designation(dto.getDesignation().toLowerCase())
                 .role(dto.getRole())
                 .status(dto.getStatus())
-                .image(imageUtil.encodeImage(image))
+                .image(image!=null ? imageUtil.encodeImage(image) : dto.getImage())
                 .attachBranch(dto.getAttachBranch().toLowerCase())
                 .guardianName(dto.getGuardianName().toLowerCase())
                 .guardianContact(dto.getGuardianContact())
@@ -90,6 +91,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         if (employee.isPresent()) {
             Employee dbEmployee = employee.get();
+
             dbEmployee.setName(dto.getName().toLowerCase());
             dbEmployee.setLane(dto.getLane().toLowerCase());
             dbEmployee.setCity(dto.getCity().toLowerCase());
@@ -108,12 +110,10 @@ public class EmployeeServiceImpl implements EmployeeService {
             dbEmployee.setEmail(dto.getEmail().toLowerCase());
 
             if (image != null) {
-                dto.setImage(imageUtil.encodeImage(image));
-            }else {
-                dto.setImage(dto.getImage());
+                dbEmployee.setImage(imageUtil.encodeImage(image));
             }
             employeeRepository.save(dbEmployee);
-            LOGGER.info("Employee Updated: {}", dbEmployee);
+            LOGGER.info("Employee Updated");
         } else {
             LOGGER.error("Employee Not Found: {}", id);
             throw new NotFoundException("Employee Not Found");

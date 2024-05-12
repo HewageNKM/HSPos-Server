@@ -12,5 +12,4 @@ public interface UserService {
     void updatePassword(RegisterRequest registerRequest);
     LoginResponse authenticate(LoginRequest loginRequest);
     void forgotPassword(String email);
-    List<RegisterRequest> getUsers();
 }

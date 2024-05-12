@@ -24,12 +24,16 @@ public class User implements UserDetails {
     private String id;
 
     @Column(nullable = false, length = 50, unique = true)
+
     @JoinColumn(name = "email")
     private String email;
+
     @Column(nullable = false, length = 384)
     private String password;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @JoinColumn(name = "role")
     private Role role;
 
 

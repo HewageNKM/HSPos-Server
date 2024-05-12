@@ -43,8 +43,4 @@ public class User {
         userService.updatePassword(registerRequest);
     }
 
-   @GetMapping
-    public List<RegisterRequest> getUsers(){
-        return userService.getUsers();
-   }
 }
