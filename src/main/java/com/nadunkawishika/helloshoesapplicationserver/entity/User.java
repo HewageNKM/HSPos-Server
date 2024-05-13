@@ -36,7 +36,7 @@ public class User implements UserDetails {
     @JoinColumn(name = "role")
     private Role role;
 
-    @OneToOne(mappedBy = "user",cascade=CascadeType.ALL)
+    @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "employee_id")
     private Employee employee;
 

@@ -69,7 +69,4 @@ public class Employee {
     @Column(nullable = false, length = 12)
     private String guardianContact;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "employee_id")
-    private User user;
 }
