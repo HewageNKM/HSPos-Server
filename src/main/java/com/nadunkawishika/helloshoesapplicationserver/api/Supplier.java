@@ -21,6 +21,7 @@ public class Supplier {
     private final SupplierService supplierService;
     private final Logger LOGGER = LoggerFactory.getLogger(Supplier.class);
 
+    @Secured({"ADMIN","USER"})
     @GetMapping
     public List<SupplierDTO> getSuppliers(@RequestParam(required = false) String pattern) {
         LOGGER.info("Get Suppliers Request");
@@ -33,6 +34,7 @@ public class Supplier {
         }
     }
 
+    @Secured({"ADMIN","USER"})
     @GetMapping("/{id}")
     public SupplierDTO getSupplier(@PathVariable String id) {
         LOGGER.info("Get Supplier Request: {}", id);
