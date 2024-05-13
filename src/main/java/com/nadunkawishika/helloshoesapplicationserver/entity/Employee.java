@@ -27,7 +27,7 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     private CivilStatus status;
 
-    @Column(nullable = false, columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String image;
 
     @Enumerated(EnumType.STRING)
@@ -69,6 +69,4 @@ public class Employee {
     @Column(nullable = false, length = 12)
     private String guardianContact;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private User user;
 }

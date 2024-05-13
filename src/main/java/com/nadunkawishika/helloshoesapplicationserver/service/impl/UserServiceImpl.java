@@ -61,8 +61,8 @@ public class UserServiceImpl implements UserService {
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .build();
 
-        employee.setUser(user);
         user.setRole(employee.getRole());
+        user.setEmployee(employee);
 
         employeeRepository.save(employee);
         userRepository.save(user);
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
             User user = byEmail.get();
             user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
             userRepository.save(user);
-            LOGGER.info("Password Updated: {}", user);
+            LOGGER.info("Password Updated ID: {}", user.getId());
         } else {
             LOGGER.error("Email does not exist");
             throw new AlreadyExistException("Email does not exist");
