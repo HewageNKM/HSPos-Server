@@ -20,6 +20,7 @@ public class Employee {
     private final Logger LOGGER = Logger.getLogger(Employee.class.getName());
     private final EmployeeService employeeService;
 
+    @Secured({"ADMIN","USER"})
     @GetMapping
     public List<EmployeeDTO> getEmployees(@RequestParam(required = false,name = "pattern") String pattern) {
         if (pattern != null) {
@@ -31,6 +32,7 @@ public class Employee {
         }
     }
 
+    @Secured({"ADMIN","USER"})
     @GetMapping("/{id}")
     public EmployeeDTO getEmployee(@PathVariable String id) {
         LOGGER.info("Get Employee Request: {}" + id);

@@ -1,6 +1,5 @@
 package com.nadunkawishika.helloshoesapplicationserver.entity;
 
-import com.nadunkawishika.helloshoesapplicationserver.enums.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,11 +44,11 @@ public class Item {
     @JoinColumn(name = "supplier_Id")
     private Supplier supplier;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     private List<Stock> stockList;
 
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "sale_item",
             joinColumns = @JoinColumn(name = "sale_id"),

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -49,7 +48,4 @@ public class Customer {
     @Column(nullable = false)
     private LocalDateTime recentPurchaseDateAndTime;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id")
-    private List<Sale> saleList;
 }
