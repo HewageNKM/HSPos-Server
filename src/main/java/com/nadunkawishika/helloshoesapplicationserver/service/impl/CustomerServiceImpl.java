@@ -107,7 +107,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         if (dto.getGender().equalsIgnoreCase("RN"))
             customer.setGender(Gender.RATHER_NOT_SAY);
-        LOGGER.info("Customer Added: {}", customer);
+        LOGGER.info("Customer Added ID: {}", customer.getCustomerId());
         customerRepository.save(customer);
     }
 

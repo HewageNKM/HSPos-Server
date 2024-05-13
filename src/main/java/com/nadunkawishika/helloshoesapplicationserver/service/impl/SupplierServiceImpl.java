@@ -46,7 +46,7 @@ public class SupplierServiceImpl implements SupplierService {
         pattern = pattern.toLowerCase();
         LOGGER.info("Filter Suppliers Request: {}", pattern);
         List<Supplier> suppliers = supplierRepository.filterByPattern(pattern);
-        LOGGER.info("Filtered Suppliers: {}", suppliers);
+        LOGGER.info("Filtered Suppliers ID");
         return mapper.toSuppliersEntityToDTOs(suppliers);
     }
 
@@ -89,7 +89,7 @@ public class SupplierServiceImpl implements SupplierService {
                 .email(dto.getEmail().toLowerCase())
                 .build();
         supplierRepository.save(supplier);
-        LOGGER.info("Supplier Added: {}", supplier);
+        LOGGER.info("Supplier Added ID:{}", supplier.getSupplierId());
     }
 
     @Override

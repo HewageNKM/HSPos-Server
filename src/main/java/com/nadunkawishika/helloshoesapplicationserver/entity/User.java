@@ -36,6 +36,9 @@ public class User implements UserDetails {
     @JoinColumn(name = "role")
     private Role role;
 
+    @OneToOne(mappedBy = "user",cascade =CascadeType.ALL)
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
