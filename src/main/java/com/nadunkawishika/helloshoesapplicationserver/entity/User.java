@@ -33,7 +33,7 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @JoinColumn(name = "role")
+    @JoinColumn(referencedColumnName = "role")
     private Role role;
 
     @OneToOne(cascade=CascadeType.ALL)

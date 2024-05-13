@@ -34,7 +34,4 @@ public class Supplier {
     @Column(nullable = false, length = 50)
     private String email;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "item_id")
-    private Item item;
 }
