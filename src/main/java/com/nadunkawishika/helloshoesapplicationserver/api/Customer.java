@@ -22,6 +22,8 @@ public class Customer {
     private final Logger LOGGER = LoggerFactory.getLogger(Customer.class);
 
 
+
+    @Secured({"ADMIN","USER"})
     @GetMapping
     public List<CustomerDTO> getCustomers(@RequestParam(required = false) String pattern) {
         if (pattern != null) {
@@ -34,7 +36,7 @@ public class Customer {
 
     }
 
-    @GetMapping("/{id}")
+    @Secured({"ADMIN","USER"})    @GetMapping("/{id}")
     public CustomerDTO getCustomer(@PathVariable String id) {
         LOGGER.info("Get Customer Request: {}", id);
         return customerService.getCustomer(id);
