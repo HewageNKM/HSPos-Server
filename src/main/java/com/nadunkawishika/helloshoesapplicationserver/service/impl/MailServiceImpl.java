@@ -2,6 +2,7 @@ package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 
 import com.nadunkawishika.helloshoesapplicationserver.service.MailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
