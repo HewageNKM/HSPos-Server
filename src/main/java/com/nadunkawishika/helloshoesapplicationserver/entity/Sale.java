@@ -44,6 +44,11 @@ public class Sale {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToMany(mappedBy = "saleList")
+    @ManyToMany
+    @JoinTable(
+            name = "sale_item",
+            joinColumns = @JoinColumn(name = "sale_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id")
+    )
     private List<Item> itemList;
 }

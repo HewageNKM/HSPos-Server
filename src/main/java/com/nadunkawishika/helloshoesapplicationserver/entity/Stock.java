@@ -13,11 +13,28 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Stock {
     @Id
-    private Long stockId;
-    private String size;
-    private int quantity;
+    @Column(length = 20)
+    private String stockId;
 
-    @ManyToOne
+    @Column(nullable = false, length = 10)
+    private Integer size40;
+
+    @Column(nullable = false, length = 10)
+    private Integer size41;
+
+    @Column(nullable = false, length = 10)
+    private Integer size42;
+
+    @Column(nullable = false, length = 10)
+    private Integer size43;
+
+    @Column(nullable = false, length = 10)
+    private Integer size44;
+
+    @Column(nullable = false, length = 10)
+    private Integer size45;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     private Item item;
 }

@@ -28,31 +28,24 @@ public class Item {
     private int quantity;
     @Column(nullable = false)
     private String category;
-    @Column(nullable = false, length = 5)
+    @Column(nullable = false, length = 50)
     private Double buyingPrice;
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 50)
     private Double sellingPrice;
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 50)
     private Double expectedProfit;
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 50)
     private Double profitMargin;
 
     @JoinColumn(referencedColumnName = "supplier_name")
-    private String supplier_name;
+    private String supplierName;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "supplier_Id")
     private Supplier supplier;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "item_id")
-    private List<Stock> stockList;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "stock_id")
+    private Stock stock;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "sale_item",
-            joinColumns = @JoinColumn(name = "sale_id"),
-            inverseJoinColumns = @JoinColumn(name = "item_id")
-    )
-    private List<Sale> saleList;
 }

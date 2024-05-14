@@ -2,9 +2,11 @@ package com.nadunkawishika.helloshoesapplicationserver.util;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.CustomerDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.EmployeeDTO;
+import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SupplierDTO;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Customer;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Employee;
+import com.nadunkawishika.helloshoesapplicationserver.entity.Item;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -45,5 +47,9 @@ public class Mapper {
         return modelMapper.map(employee, EmployeeDTO.class);
     }
 
+    public List<ItemDTO> toItemEntityToDTOs(List<Item> items) {
+        Stream<ItemDTO> itemDTOStream = items.stream().map(item -> modelMapper.map(item, ItemDTO.class));
+        return itemDTOStream.toList();
+    }
 }
 
