@@ -24,9 +24,14 @@ public class Inventory {
 
     @Secured({"ADMIN", "USER"})
     @GetMapping
-    public List<ItemDTO> getAllItems() {
-        LOGGER.info("Get Items Request");
-        return inventoryService.getAllItems();
+    public List<ItemDTO> getAllItems( String pattern) {
+       return inventoryService.getAllItems();
+    }
+
+    @Secured({"ADMIN", "USER"})
+    @GetMapping("/filter/{pattern}")
+    public List<ItemDTO> filterItems(@PathVariable String pattern) {
+        return inventoryService.filterItems(pattern);
     }
 
     @Secured({"ADMIN", "USER"})

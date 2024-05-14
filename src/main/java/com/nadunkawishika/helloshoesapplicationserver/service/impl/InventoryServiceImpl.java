@@ -34,25 +34,28 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public List<ItemDTO> getAllItems() {
         List<ItemDTO> itemDTOS = new ArrayList<>();
-
         for (Item item : inventoryRepository.findAll()) {
-            ItemDTO dto = ItemDTO
-                    .builder()
-                    .itemId(item.getItemId())
-                    .description(item.getDescription())
-                    .image(item.getImage())
-                    .expectedProfit(item.getExpectedProfit())
-                    .profitMargin(item.getProfitMargin())
-                    .quantity(item.getQuantity())
-                    .supplierName(item.getSupplierName())
-                    .supplierId(item.getSupplier().getSupplierId())
-                    .buyingPrice(item.getBuyingPrice())
-                    .sellingPrice(item.getSellingPrice())
-                    .category(item.getCategory())
-                    .build();
-            itemDTOS.add(dto);
+            getItemDTOs(itemDTOS, item);
         }
         return itemDTOS;
+    }
+
+    private void getItemDTOs(List<ItemDTO> itemDTOS, Item item) {
+        ItemDTO dto = ItemDTO
+                .builder()
+                .itemId(item.getItemId())
+                .description(item.getDescription())
+                .image(item.getImage())
+                .expectedProfit(item.getExpectedProfit())
+                .profitMargin(item.getProfitMargin())
+                .quantity(item.getQuantity())
+                .supplierName(item.getSupplierName())
+                .supplierId(item.getSupplier().getSupplierId())
+                .buyingPrice(item.getBuyingPrice())
+                .sellingPrice(item.getSellingPrice())
+                .category(item.getCategory())
+                .build();
+        itemDTOS.add(dto);
     }
 
     @Override
@@ -113,7 +116,11 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public List<ItemDTO> filterItems(String pattern) {
-        return List.of();
+        List<ItemDTO> itemDTOS = new ArrayList<>();
+        for (Item item : inventoryRepository.filterItems(pattern)) {
+            getItemDTOs(itemDTOS, item);
+        }
+        return itemDTOS;
     }
 
     @Override
