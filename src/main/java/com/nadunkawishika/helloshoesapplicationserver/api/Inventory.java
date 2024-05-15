@@ -1,6 +1,7 @@
 package com.nadunkawishika.helloshoesapplicationserver.api;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
+import com.nadunkawishika.helloshoesapplicationserver.dto.CustomDTO;
 import com.nadunkawishika.helloshoesapplicationserver.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -24,9 +25,27 @@ public class Inventory {
 
     @Secured({"ADMIN", "USER"})
     @GetMapping
-    public List<ItemDTO> getAllItems( String pattern) {
-       return inventoryService.getAllItems();
+    public List<ItemDTO> getAllItems() {
+        return inventoryService.getAllItems();
     }
+    @Secured({"ADMIN", "USER"})
+    @GetMapping("/stocks")
+    public List<CustomDTO> getAllStocks() {
+        return inventoryService.getAllStocks();
+    }
+
+    @Secured({"ADMIN", "USER"})
+    @GetMapping("/stocks/filter/{pattern}")
+    public List<CustomDTO> filterStocks(@PathVariable String pattern) {
+        return inventoryService.filterStocks(pattern);
+    }
+
+    @Secured({"ADMIN", "USER"})
+    @PutMapping("/stocks/{id}")
+    public List<CustomDTO> updateStocks(@PathVariable String id, @RequestPart CustomDTO dto) {
+        return inventoryService.updateStock(id,dto);
+    }
+
 
     @Secured({"ADMIN", "USER"})
     @GetMapping("/filter/{pattern}")

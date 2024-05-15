@@ -34,7 +34,7 @@ public class Stock {
     @Column(nullable = false, length = 10)
     private Integer size45;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
     private Item item;
 }

@@ -1,12 +1,14 @@
 package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nadunkawishika.helloshoesapplicationserver.dto.CustomDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Item;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Stock;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Supplier;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
 import com.nadunkawishika.helloshoesapplicationserver.repository.InventoryRepository;
+import com.nadunkawishika.helloshoesapplicationserver.repository.StocksRepository;
 import com.nadunkawishika.helloshoesapplicationserver.repository.SupplierRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.InventoryService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
@@ -26,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InventoryServiceImpl implements InventoryService {
     private final InventoryRepository inventoryRepository;
+    private final StocksRepository stocksRepository;
     private final ObjectMapper objectMapper;
     private final ImageUtil imageUtil;
     private final SupplierRepository supplierRepository;
@@ -156,5 +159,53 @@ public class InventoryServiceImpl implements InventoryService {
                 .sellingPrice(item.getSellingPrice())
                 .category(item.getCategory())
                 .build();
+    }
+
+    @Override
+    public List<CustomDTO> getAllStocks() {
+        List<Object[]> stockDetails = stocksRepository.getStockDetails();
+        return getCustomDTOS(stockDetails);
+    }
+
+    @Override
+    public List<CustomDTO> updateStock(String id, CustomDTO dto) {
+        Stock stock = stocksRepository.findById(id).orElseThrow(() -> new NotFoundException("Stock Not Found"));
+        stock.setSize40(dto.getSize40());
+        stock.setSize41(dto.getSize41());
+        stock.setSize42(dto.getSize42());
+        stock.setSize43(dto.getSize43());
+        stock.setSize44(dto.getSize44());
+        stock.setSize45(dto.getSize45());
+        stock.setItem(dto.getItem());
+        stocksRepository.save(stock);
+        return getAllStocks();
+    }
+
+    @Override
+    public List<CustomDTO> filterStocks(String pattern) {
+        List<Object[]> stockDetails = stocksRepository.filterStocks(pattern);
+        return getCustomDTOS(stockDetails);
+    }
+
+    private List<CustomDTO> getCustomDTOS(List<Object[]> stockDetails) {
+        List<CustomDTO> customDTOS = new ArrayList<>();
+        for (Object[] stockDetail : stockDetails) {
+            CustomDTO dto = CustomDTO
+                    .builder()
+                    .stockId(stockDetail[0].toString())
+                    .supplierId(stockDetail[1].toString())
+                    .supplierName(stockDetail[2].toString())
+                    .itemId(stockDetail[3].toString())
+                    .description(stockDetail[4].toString())
+                    .size40(Integer.parseInt(stockDetail[5].toString()))
+                    .size41(Integer.parseInt(stockDetail[6].toString()))
+                    .size42(Integer.parseInt(stockDetail[7].toString()))
+                    .size43(Integer.parseInt(stockDetail[8].toString()))
+                    .size44(Integer.parseInt(stockDetail[9].toString()))
+                    .size45(Integer.parseInt(stockDetail[10].toString()))
+                    .build();
+            customDTOS.add(dto);
+        }
+        return customDTOS;
     }
 }

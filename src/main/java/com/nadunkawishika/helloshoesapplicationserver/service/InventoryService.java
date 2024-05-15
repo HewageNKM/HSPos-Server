@@ -1,6 +1,7 @@
 package com.nadunkawishika.helloshoesapplicationserver.service;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
+import com.nadunkawishika.helloshoesapplicationserver.dto.CustomDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -13,4 +14,7 @@ public interface InventoryService {
     void deleteItem(String id);
     List<ItemDTO> filterItems(String pattern);
     ItemDTO getItem(String id);
+    List<CustomDTO> getAllStocks();
+    List<CustomDTO> updateStock(String id, CustomDTO dto);
+    List<CustomDTO> filterStocks(String pattern);
 }
