@@ -1,7 +1,7 @@
 package com.nadunkawishika.helloshoesapplicationserver.api;
 
-import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.CustomDTO;
+import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
 import com.nadunkawishika.helloshoesapplicationserver.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -30,6 +30,7 @@ public class Inventory {
         LOGGER.info("Get All Items Request");
         return inventoryService.getAllItems();
     }
+
     @Secured({"ADMIN", "USER"})
     @GetMapping("/stocks")
     public List<CustomDTO> getAllStocks() {
@@ -79,7 +80,7 @@ public class Inventory {
     @PutMapping("/stocks/{id}")
     public void updateStocks(@PathVariable String id, @Validated @RequestBody CustomDTO dto) {
         LOGGER.info("Update Stock Request");
-        inventoryService.updateStock(id,dto);
+        inventoryService.updateStock(id, dto);
     }
 
     @Secured("ADMIN")

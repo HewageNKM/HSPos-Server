@@ -56,8 +56,9 @@ public class SupplierServiceImpl implements SupplierService {
     @Override
     public void updateSupplier(String id, SupplierDTO dto) {
         Supplier supplier = supplierRepository.findById(id).orElseThrow(() -> new NotFoundException("Supplier Not Found" + id));
-        Item item = itemRepository.findBySupplierId(supplier.getSupplierId()).orElseThrow(() -> new NotFoundException("Item Not Found" + id));
-        item.setSupplierName(dto.getName().toLowerCase());
+        supplier.getItems().forEach(item -> {
+            item.setSupplierName(dto.getName().toLowerCase());
+        });
         supplier.setName(dto.getName().toLowerCase());
         supplier.setLane(dto.getLane().toLowerCase());
         supplier.setCity(dto.getCity().toLowerCase());
@@ -67,7 +68,6 @@ public class SupplierServiceImpl implements SupplierService {
         supplier.setContactNo1(dto.getContactNo1());
         supplier.setContactNo2(dto.getContactNo2());
         supplier.setEmail(dto.getEmail().toLowerCase());
-        itemRepository.save(item);
         supplierRepository.save(supplier);
         LOGGER.info("Supplier Updated: {}", supplier.getSupplierId());
     }
