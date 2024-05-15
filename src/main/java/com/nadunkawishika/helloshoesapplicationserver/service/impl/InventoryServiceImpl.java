@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -179,13 +180,17 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public void updateStock(String id, CustomDTO dto) {
         Stock stock = stocksRepository.findById(id).orElseThrow(() -> new NotFoundException("Stock Not Found"));
+        Item item = inventoryRepository.findById(stock.getItem().getItemId()).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        int totalStock = dto.getSize40() + dto.getSize41() + dto.getSize42() + dto.getSize43() + dto.getSize44() + dto.getSize45();
+        item.setQuantity(totalStock);
         stock.setSize40(dto.getSize40());
         stock.setSize41(dto.getSize41());
         stock.setSize42(dto.getSize42());
         stock.setSize43(dto.getSize43());
         stock.setSize44(dto.getSize44());
         stock.setSize45(dto.getSize45());
-        stock.setItem(dto.getItem());
+        stock.setItem(item);
+
         stocksRepository.save(stock);
         LOGGER.info("Stock Updated: {}", stock.getStockId());
     }

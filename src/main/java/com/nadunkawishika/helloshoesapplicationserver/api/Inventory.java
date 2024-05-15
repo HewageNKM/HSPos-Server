@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,7 +77,7 @@ public class Inventory {
 
     @Secured("ADMIN")
     @PutMapping("/stocks/{id}")
-    public void updateStocks(@PathVariable String id, @RequestBody CustomDTO dto) {
+    public void updateStocks(@PathVariable String id, @Validated @RequestBody CustomDTO dto) {
         LOGGER.info("Update Stock Request");
         inventoryService.updateStock(id,dto);
     }
