@@ -48,7 +48,7 @@ public class Inventory {
     //Authorize Methods
     @Secured("ADMIN")
     @PutMapping("/{id}")
-    public void updateItem(@PathVariable String id, @RequestPart String dto, @RequestPart MultipartFile image) {
+    public void updateItem(@PathVariable String id, @RequestPart String dto, @RequestPart(required = false) MultipartFile image) {
         try {
             LOGGER.info("Update Item Request");
             inventoryService.updateItem(id, dto, image);

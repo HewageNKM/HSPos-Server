@@ -29,6 +29,7 @@ public class InventoryServiceImpl implements InventoryService {
     private final ObjectMapper objectMapper;
     private final ImageUtil imageUtil;
     private final SupplierRepository supplierRepository;
+    private final DecimalFormat df = new DecimalFormat("0.00");
 
 
     @Override
@@ -60,8 +61,6 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public void addItem(String itemDTO, MultipartFile image) throws IOException {
-        DecimalFormat df = new DecimalFormat("0.00");
-
         ItemDTO dto = objectMapper.readValue(itemDTO, ItemDTO.class);
         String id = (dto.getOccasion() + dto.getVerities() + dto.getGender() + GenerateId.getId("")).toLowerCase();
         String stockId = GenerateId.getId("STK").toLowerCase();
@@ -105,8 +104,25 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public void updateItem(String id, String itemDTO, MultipartFile image) {
+    public void updateItem(String id, String itemDTO, MultipartFile image) throws IOException {
+        ItemDTO dto = objectMapper.readValue(itemDTO, ItemDTO.class);
+        Item item = inventoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        Supplier supplier = supplierRepository.findById(dto.getSupplierId().toLowerCase()).orElseThrow(() -> new NotFoundException("Supplier Not Found"));
 
+        Double expectedProfit = dto.getSellingPrice() - dto.getBuyingPrice();
+        Double profitMargin = (expectedProfit / dto.getBuyingPrice()) * 100;
+        profitMargin = Double.parseDouble(df.format(profitMargin));
+
+        item.setDescription(dto.getDescription().toLowerCase());
+        item.setCategory((dto.getOccasion() + "/" + dto.getVerities() + "/" + dto.getGender()).toLowerCase());
+        item.setBuyingPrice(dto.getBuyingPrice());
+        item.setSellingPrice(dto.getSellingPrice());
+        item.setSupplierName(supplier.getName());
+        item.setExpectedProfit(expectedProfit);
+        item.setProfitMargin(profitMargin);
+        item.setSupplier(supplier);
+        item.setImage(image != null ? imageUtil.encodeImage(image) : null);
+        inventoryRepository.save(item);
     }
 
     @Override
@@ -125,6 +141,20 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public ItemDTO getItem(String id) {
-        return null;
+        Item item = inventoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        return ItemDTO
+                .builder()
+                .itemId(item.getItemId())
+                .description(item.getDescription())
+                .image(item.getImage())
+                .expectedProfit(item.getExpectedProfit())
+                .profitMargin(item.getProfitMargin())
+                .quantity(item.getQuantity())
+                .supplierName(item.getSupplierName())
+                .supplierId(item.getSupplier().getSupplierId())
+                .buyingPrice(item.getBuyingPrice())
+                .sellingPrice(item.getSellingPrice())
+                .category(item.getCategory())
+                .build();
     }
 }
