@@ -1,8 +1,10 @@
 package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.SupplierDTO;
+import com.nadunkawishika.helloshoesapplicationserver.entity.Item;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Supplier;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
+import com.nadunkawishika.helloshoesapplicationserver.repository.InventoryRepository;
 import com.nadunkawishika.helloshoesapplicationserver.repository.SupplierRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.SupplierService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class SupplierServiceImpl implements SupplierService {
     private final SupplierRepository supplierRepository;
+    private final InventoryRepository itemRepository;
     private final Mapper mapper;
     private final Logger LOGGER = LoggerFactory.getLogger(SupplierServiceImpl.class);
 
@@ -52,24 +55,21 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public void updateSupplier(String id, SupplierDTO dto) {
-        Optional<Supplier> supplier = supplierRepository.findById(id);
-        if (supplier.isPresent()) {
-            Supplier spl = supplier.get();
-            spl.setName(dto.getName().toLowerCase());
-            spl.setLane(dto.getLane().toLowerCase());
-            spl.setCity(dto.getCity().toLowerCase());
-            spl.setState(dto.getState().toLowerCase());
-            spl.setPostalCode(dto.getPostalCode());
-            spl.setCountry(dto.getCountry().toLowerCase());
-            spl.setContactNo1(dto.getContactNo1());
-            spl.setContactNo2(dto.getContactNo2());
-            spl.setEmail(dto.getEmail().toLowerCase());
-            supplierRepository.save(spl);
-            LOGGER.info("Supplier Updated: {}", spl);
-        } else {
-            LOGGER.error("Supplier Not Found: {}", id);
-            throw new NotFoundException("Supplier Not Found" + id);
-        }
+        Supplier supplier = supplierRepository.findById(id).orElseThrow(() -> new NotFoundException("Supplier Not Found" + id));
+        supplier.getItems().forEach(item -> {
+            item.setSupplierName(dto.getName().toLowerCase());
+        });
+        supplier.setName(dto.getName().toLowerCase());
+        supplier.setLane(dto.getLane().toLowerCase());
+        supplier.setCity(dto.getCity().toLowerCase());
+        supplier.setState(dto.getState().toLowerCase());
+        supplier.setPostalCode(dto.getPostalCode());
+        supplier.setCountry(dto.getCountry().toLowerCase());
+        supplier.setContactNo1(dto.getContactNo1());
+        supplier.setContactNo2(dto.getContactNo2());
+        supplier.setEmail(dto.getEmail().toLowerCase());
+        supplierRepository.save(supplier);
+        LOGGER.info("Supplier Updated: {}", supplier.getSupplierId());
     }
 
     @Override

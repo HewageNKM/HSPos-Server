@@ -36,7 +36,8 @@ public class Customer {
 
     }
 
-    @Secured({"ADMIN","USER"})    @GetMapping("/{id}")
+    @Secured({"ADMIN","USER"})
+    @GetMapping("/{id}")
     public CustomerDTO getCustomer(@PathVariable String id) {
         LOGGER.info("Get Customer Request: {}", id);
         return customerService.getCustomer(id);
@@ -52,7 +53,7 @@ public class Customer {
 
     @Secured("ADMIN")
     @PutMapping("/{id}")
-    public void updateCustomer(@PathVariable String id, @RequestBody CustomerDTO customerDTO) {
+    public void updateCustomer(@PathVariable String id, @Validated @RequestBody CustomerDTO customerDTO) {
         LOGGER.info("Update Customer Request: {}", customerDTO);
         customerService.updateCustomer(id, customerDTO);
     }

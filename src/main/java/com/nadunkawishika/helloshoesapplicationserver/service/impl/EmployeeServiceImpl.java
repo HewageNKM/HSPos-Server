@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +71,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .designation(dto.getDesignation().toLowerCase())
                 .role(dto.getRole())
                 .status(dto.getStatus())
-                .image(image!=null ? imageUtil.encodeImage(image) : dto.getImage())
+                .image(image != null ? imageUtil.encodeImage(image) : dto.getImage())
                 .attachBranch(dto.getAttachBranch().toLowerCase())
                 .guardianName(dto.getGuardianName().toLowerCase())
                 .guardianContact(dto.getGuardianContact())
