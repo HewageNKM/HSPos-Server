@@ -26,30 +26,28 @@ public class Inventory {
     @Secured({"ADMIN", "USER"})
     @GetMapping
     public List<ItemDTO> getAllItems() {
+        LOGGER.info("Get All Items Request");
         return inventoryService.getAllItems();
     }
     @Secured({"ADMIN", "USER"})
     @GetMapping("/stocks")
     public List<CustomDTO> getAllStocks() {
+        LOGGER.info("Get All Stocks Request");
         return inventoryService.getAllStocks();
     }
 
     @Secured({"ADMIN", "USER"})
     @GetMapping("/stocks/filter/{pattern}")
     public List<CustomDTO> filterStocks(@PathVariable String pattern) {
+        LOGGER.info("Filter Stocks Request: {}", pattern);
         return inventoryService.filterStocks(pattern);
-    }
-
-    @Secured({"ADMIN", "USER"})
-    @PutMapping("/stocks/{id}")
-    public List<CustomDTO> updateStocks(@PathVariable String id, @RequestPart CustomDTO dto) {
-        return inventoryService.updateStock(id,dto);
     }
 
 
     @Secured({"ADMIN", "USER"})
     @GetMapping("/filter/{pattern}")
     public List<ItemDTO> filterItems(@PathVariable String pattern) {
+        LOGGER.info("Filter Items Request: {}", pattern);
         return inventoryService.filterItems(pattern);
     }
 
@@ -74,6 +72,13 @@ public class Inventory {
         } catch (IOException e) {
             LOGGER.error("Update Item Request Failed: {}", e.getMessage());
         }
+    }
+
+    @Secured("ADMIN")
+    @PutMapping("/stocks/{id}")
+    public void updateStocks(@PathVariable String id, @RequestBody CustomDTO dto) {
+        LOGGER.info("Update Stock Request");
+        inventoryService.updateStock(id,dto);
     }
 
     @Secured("ADMIN")

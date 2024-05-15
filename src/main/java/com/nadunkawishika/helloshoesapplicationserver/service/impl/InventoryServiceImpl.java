@@ -14,6 +14,7 @@ import com.nadunkawishika.helloshoesapplicationserver.service.InventoryService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import com.nadunkawishika.helloshoesapplicationserver.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,11 +33,13 @@ public class InventoryServiceImpl implements InventoryService {
     private final ObjectMapper objectMapper;
     private final ImageUtil imageUtil;
     private final SupplierRepository supplierRepository;
+    private final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(InventoryServiceImpl.class);
     private final DecimalFormat df = new DecimalFormat("0.00");
 
 
     @Override
     public List<ItemDTO> getAllItems() {
+        LOGGER.info("Get All Items Request");
         List<ItemDTO> itemDTOS = new ArrayList<>();
         for (Item item : inventoryRepository.findAll()) {
             getItemDTOs(itemDTOS, item);
@@ -45,6 +48,7 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     private void getItemDTOs(List<ItemDTO> itemDTOS, Item item) {
+        LOGGER.info("Item Found: {}", item.getItemId());
         ItemDTO dto = ItemDTO
                 .builder()
                 .itemId(item.getItemId())
@@ -103,7 +107,7 @@ public class InventoryServiceImpl implements InventoryService {
 
         stock.setItem(item);
         inventoryRepository.save(item);
-
+        LOGGER.info("Item Added: {}", item.getItemId());
     }
 
     @Override
@@ -126,11 +130,13 @@ public class InventoryServiceImpl implements InventoryService {
         item.setSupplier(supplier);
         item.setImage(image != null ? imageUtil.encodeImage(image) : null);
         inventoryRepository.save(item);
+        LOGGER.info("Item Updated: {}", item.getItemId());
     }
 
     @Override
     public void deleteItem(String id) {
         inventoryRepository.deleteById(id);
+        LOGGER.info("Item Deleted: {}", id);
     }
 
     @Override
@@ -139,11 +145,13 @@ public class InventoryServiceImpl implements InventoryService {
         for (Item item : inventoryRepository.filterItems(pattern)) {
             getItemDTOs(itemDTOS, item);
         }
+        LOGGER.info("Filtered Items");
         return itemDTOS;
     }
 
     @Override
     public ItemDTO getItem(String id) {
+        LOGGER.info("Get Item Request: {}", id);
         Item item = inventoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Item Not Found"));
         return ItemDTO
                 .builder()
@@ -163,12 +171,13 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public List<CustomDTO> getAllStocks() {
+        LOGGER.info("Get All Stocks Request");
         List<Object[]> stockDetails = stocksRepository.getStockDetails();
         return getCustomDTOS(stockDetails);
     }
 
     @Override
-    public List<CustomDTO> updateStock(String id, CustomDTO dto) {
+    public void updateStock(String id, CustomDTO dto) {
         Stock stock = stocksRepository.findById(id).orElseThrow(() -> new NotFoundException("Stock Not Found"));
         stock.setSize40(dto.getSize40());
         stock.setSize41(dto.getSize41());
@@ -178,12 +187,13 @@ public class InventoryServiceImpl implements InventoryService {
         stock.setSize45(dto.getSize45());
         stock.setItem(dto.getItem());
         stocksRepository.save(stock);
-        return getAllStocks();
+        LOGGER.info("Stock Updated: {}", stock.getStockId());
     }
 
     @Override
     public List<CustomDTO> filterStocks(String pattern) {
         List<Object[]> stockDetails = stocksRepository.filterStocks(pattern);
+        LOGGER.info("Filtered Stocks");
         return getCustomDTOS(stockDetails);
     }
 
@@ -206,6 +216,7 @@ public class InventoryServiceImpl implements InventoryService {
                     .build();
             customDTOS.add(dto);
         }
+        LOGGER.info("Custom DTOs Created");
         return customDTOS;
     }
 }
