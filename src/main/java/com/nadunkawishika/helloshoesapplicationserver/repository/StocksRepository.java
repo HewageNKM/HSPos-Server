@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StocksRepository extends JpaRepository<Stock, String> {
@@ -14,4 +15,7 @@ public interface StocksRepository extends JpaRepository<Stock, String> {
 
     @Query(value = "SELECT item.stock_id,item.supplier_id,supplier.name,item.item_id,item.description,size40,size41,size42,size43,size44,size45 FROM item INNER JOIN supplier ON supplier.supplier_id = item.supplier_id INNER JOIN stock ON item.item_id = stock.item_id;", nativeQuery = true)
     List<Object[]> getStockDetails();
+
+    @Query(value = "SELECT * FROM stock WHERE item_id = ?1", nativeQuery = true)
+    Optional<Stock> findByItemId(String itemId);
 }

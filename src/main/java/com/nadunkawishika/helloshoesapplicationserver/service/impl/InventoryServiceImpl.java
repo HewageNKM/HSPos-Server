@@ -201,6 +201,21 @@ public class InventoryServiceImpl implements InventoryService {
         return getCustomDTOS(stockDetails);
     }
 
+    @Override
+    public CustomDTO getStock(String id) {
+        Stock stock = stocksRepository.findByItemId(id).orElseThrow(() -> new NotFoundException("Stock Not Found"));
+        return CustomDTO
+                .builder()
+                .size40(stock.getSize40())
+                .size41(stock.getSize41())
+                .size42(stock.getSize42())
+                .size43(stock.getSize43())
+                .size44(stock.getSize44())
+                .size45(stock.getSize45())
+                .itemId(stock.getItem().getItemId())
+                .build();
+    }
+
     private List<CustomDTO> getCustomDTOS(List<Object[]> stockDetails) {
         List<CustomDTO> customDTOS = new ArrayList<>();
         for (Object[] stockDetail : stockDetails) {
