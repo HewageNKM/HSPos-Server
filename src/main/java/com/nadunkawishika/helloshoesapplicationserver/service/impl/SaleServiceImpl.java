@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -27,6 +28,7 @@ public class SaleServiceImpl implements SaleService {
     private final CustomerRepository customerRepository;
     private final StocksRepository stocksRepository;
     private final InventoryRepository inventoryRepository;
+    private final DecimalFormat df = new DecimalFormat("0.00");
 
     @Override
     public void addSale(SaleDTO dto) {
@@ -81,17 +83,20 @@ public class SaleServiceImpl implements SaleService {
 
         customer.ifPresent(cus -> {
             cus.setRecentPurchaseDateAndTime(LocalDateTime.now());
-            cus.setTotalPoints(cus.getTotalPoints() + (dto.getTotal() / 1000));
-            Double totalPoints = cus.getTotalPoints();
-            if (totalPoints < 50) {
+            Double totalPoints = dto.getTotal() / 1000.0;
+            totalPoints = Double.valueOf(df.format(totalPoints));
+            cus.setTotalPoints(cus.getTotalPoints()+totalPoints);
+
+            if (cus.getTotalPoints() < 50) {
                 cus.setLevel(Level.New);
-            } else if (totalPoints >= 50 && totalPoints < 100) {
-                cus.setLevel(Level.Silver);
-            } else if (totalPoints >= 100 && totalPoints < 200) {
+            } else if (cus.getTotalPoints()  >= 50 && cus.getTotalPoints() < 100) {
                 cus.setLevel(Level.Bronze);
-            } else if (totalPoints >= 200) {
+            } else if (cus.getTotalPoints()  >= 100 && cus.getTotalPoints() < 200) {
+                cus.setLevel(Level.Silver);
+            } else if (cus.getTotalPoints()  >= 200) {
                 cus.setLevel(Level.Gold);
             }
+            System.out.print(cus);
             customerRepository.save(cus);
         });
     }
