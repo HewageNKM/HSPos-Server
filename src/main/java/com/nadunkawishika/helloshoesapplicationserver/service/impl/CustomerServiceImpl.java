@@ -34,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDTO getCustomer(String id) {
-        return modelMapper.toCustomerEntityToDTO(customerRepository.findById(id).orElseThrow(() -> {
+        return modelMapper.toCustomerEntityToDTO(customerRepository.findByCustomerIdOrEmailOrContact(id,id,id).orElseThrow(() -> {
             LOGGER.error("Customer Not Found: {}", id);
             return new NotFoundException("Customer Not Found");
         }));

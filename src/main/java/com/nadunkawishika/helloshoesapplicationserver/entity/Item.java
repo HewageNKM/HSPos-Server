@@ -40,7 +40,7 @@ public class Item {
     @JoinColumn(referencedColumnName = "supplier_name")
     private String supplierName;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "supplier_Id")
     private Supplier supplier;
 

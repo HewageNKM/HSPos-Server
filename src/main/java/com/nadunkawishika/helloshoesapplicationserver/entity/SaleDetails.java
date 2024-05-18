@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 
@@ -15,16 +14,23 @@ import java.time.LocalTime;
 @Data
 @Builder
 @Entity
-public class Sale {
+public class SaleDetails {
     @Id
     @Column(length = 20)
-    private String saleId;
-    private LocalDate date;
-    private LocalTime time;
+    private String saleDetailsId;
+
+    private String description;
+
+    private Integer qty;
+    private Double price;
     private Double total;
-    private String paymentDescription;
+
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    @JoinColumn(name = "item_id")
+    private Item item;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "sale_id")
+    private Sale sale;
 }

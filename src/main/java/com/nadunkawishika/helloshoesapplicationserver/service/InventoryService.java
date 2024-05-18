@@ -2,6 +2,7 @@ package com.nadunkawishika.helloshoesapplicationserver.service;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.CustomDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
+import com.nadunkawishika.helloshoesapplicationserver.entity.Stock;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -25,4 +26,6 @@ public interface InventoryService {
     void updateStock(String id, CustomDTO dto);
 
     List<CustomDTO> filterStocks(String pattern);
+
+    CustomDTO getStock(String id);
 }
