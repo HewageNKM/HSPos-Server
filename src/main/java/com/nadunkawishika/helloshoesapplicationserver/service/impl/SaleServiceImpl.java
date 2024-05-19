@@ -9,6 +9,7 @@ import com.nadunkawishika.helloshoesapplicationserver.repository.*;
 import com.nadunkawishika.helloshoesapplicationserver.service.SaleService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +33,11 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public void addSale(SaleDTO dto) {
-        Optional<Customer> customer = customerRepository.findByCustomerIdOrEmailOrContact(dto.getCustomerId().toLowerCase(), dto.getCustomerId().toLowerCase(), dto.getCustomerId().toLowerCase());
-
+        Optional<Customer> customer = Optional.empty();
+        if (dto.getCustomerId() != null) {
+            customer = customerRepository.findById(dto.getCustomerId());
+        }
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         List<SaleDetailDTO> saleDetailsList = dto.getSaleDetailsList();
         saleDetailsList.forEach(saleDTO -> {
             Item item = inventoryRepository.findById(saleDTO.getItemId().toLowerCase()).orElseThrow(() -> new NotFoundException("Inventory not found " + saleDTO.getItemId()));
@@ -61,7 +65,7 @@ public class SaleServiceImpl implements SaleService {
             stocksRepository.save(stock);
         });
 
-        Sale sale = Sale.builder().saleId(GenerateId.getId("SAL").toLowerCase()).date(LocalDate.now()).total(dto.getTotal()).paymentDescription(dto.getPaymentDescription()).time(LocalTime.now()).customer(customer.orElse(null)).build();
+        Sale sale = Sale.builder().saleId(GenerateId.getId("SAL").toLowerCase()).date(LocalDate.now()).total(dto.getTotal()).paymentDescription(dto.getPaymentDescription()).time(LocalTime.now()).customer(customer.orElse(null)).cashierName(userName).build();
         saleRepository.save(sale);
 
         saleDetailsList.forEach(saleDTO -> {
@@ -85,15 +89,15 @@ public class SaleServiceImpl implements SaleService {
             cus.setRecentPurchaseDateAndTime(LocalDateTime.now());
             Double totalPoints = dto.getTotal() / 1000.0;
             totalPoints = Double.valueOf(df.format(totalPoints));
-            cus.setTotalPoints(cus.getTotalPoints()+totalPoints);
+            cus.setTotalPoints(cus.getTotalPoints() + totalPoints);
 
             if (cus.getTotalPoints() < 50) {
                 cus.setLevel(Level.New);
-            } else if (cus.getTotalPoints()  >= 50 && cus.getTotalPoints() < 100) {
+            } else if (cus.getTotalPoints() >= 50 && cus.getTotalPoints() < 100) {
                 cus.setLevel(Level.Bronze);
-            } else if (cus.getTotalPoints()  >= 100 && cus.getTotalPoints() < 200) {
+            } else if (cus.getTotalPoints() >= 100 && cus.getTotalPoints() < 200) {
                 cus.setLevel(Level.Silver);
-            } else if (cus.getTotalPoints()  >= 200) {
+            } else if (cus.getTotalPoints() >= 200) {
                 cus.setLevel(Level.Gold);
             }
             System.out.print(cus);

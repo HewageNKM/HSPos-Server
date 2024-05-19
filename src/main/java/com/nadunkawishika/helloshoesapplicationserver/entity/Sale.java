@@ -23,6 +23,7 @@ public class Sale {
     private LocalTime time;
     private Double total;
     private String paymentDescription;
+    private String cashierName;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
