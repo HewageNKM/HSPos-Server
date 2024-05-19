@@ -9,6 +9,8 @@ import com.nadunkawishika.helloshoesapplicationserver.repository.*;
 import com.nadunkawishika.helloshoesapplicationserver.service.SaleService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +32,12 @@ public class SaleServiceImpl implements SaleService {
     private final StocksRepository stocksRepository;
     private final InventoryRepository inventoryRepository;
     private final DecimalFormat df = new DecimalFormat("0.00");
+    private final Logger LOGGER = LoggerFactory.getLogger(SaleServiceImpl.class);
+
 
     @Override
     public void addSale(SaleDTO dto) {
+        LOGGER.info("Sale request received");
         Optional<Customer> customer = Optional.empty();
         if (dto.getCustomerId() != null) {
             customer = customerRepository.findById(dto.getCustomerId());
@@ -103,5 +108,6 @@ public class SaleServiceImpl implements SaleService {
             System.out.print(cus);
             customerRepository.save(cus);
         });
+        LOGGER.info("Sale request completed "+sale.getSaleId());
     }
 }
