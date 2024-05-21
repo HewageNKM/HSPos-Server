@@ -19,11 +19,12 @@ public class SaleDetails {
     @Column(length = 20)
     private String saleDetailsId;
 
-    private String description;
+    private String name;
 
     private Integer qty;
     private Double price;
     private Double total;
+    private String size;
 
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

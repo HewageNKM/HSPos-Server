@@ -3,6 +3,7 @@ package com.nadunkawishika.helloshoesapplicationserver.exception;
 import com.nadunkawishika.helloshoesapplicationserver.dto.resAndReq.ErrorInfoResponse;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.AlreadyExistException;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
+import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.RefundNotAvailableException;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +74,10 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.UNAUTHORIZED).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.UNAUTHORIZED);
     }
 
-
+    @ExceptionHandler(RefundNotAvailableException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ErrorInfoResponse> handleException(RefundNotAvailableException exception) {
+        return new ResponseEntity<>(ErrorInfoResponse.builder().status(HttpStatus.UNAUTHORIZED).date(LocalDateTime.now()).message(exception.getMessage()).build(), HttpStatus.UNAUTHORIZED);
+    }
 }
 

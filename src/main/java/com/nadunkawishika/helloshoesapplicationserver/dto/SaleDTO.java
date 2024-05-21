@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @Builder
 public class SaleDTO {
+    private String saleId;
     private String customerId;
     @NotNull(message = "Sale date cannot be empty")
     private List<SaleDetailDTO> saleDetailsList;
