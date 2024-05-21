@@ -48,4 +48,8 @@ public class Item {
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id")
+    private List<SaleDetails> saleDetailsList;
+
 }

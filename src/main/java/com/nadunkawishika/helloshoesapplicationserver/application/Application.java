@@ -88,7 +88,7 @@ public class Application {
                 new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*");
+        config.addAllowedOriginPattern("http://nadunkawishika.me");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
