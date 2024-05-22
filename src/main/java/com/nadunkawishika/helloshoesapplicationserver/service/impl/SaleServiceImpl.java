@@ -22,9 +22,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -74,7 +75,7 @@ public class SaleServiceImpl implements SaleService {
             stocksRepository.save(stock);
         });
 
-        Sale sale = Sale.builder().saleId(GenerateId.getId("SAL").toLowerCase()).date(LocalDate.now()).total(dto.getTotal()).paymentDescription(dto.getPaymentDescription()).time(LocalTime.now()).customer(customer.orElse(null)).cashierName(userName).build();
+        Sale sale = Sale.builder().saleId(GenerateId.getId("SAL").toLowerCase()).date(LocalDate.now()).paymentDescription(dto.getPaymentDescription()).time(LocalTime.now()).customer(customer.orElse(null)).cashierName(userName).build();
         saleRepository.save(sale);
 
         saleDetailsList.forEach(saleDTO -> saleDetailsRepository
@@ -95,7 +96,11 @@ public class SaleServiceImpl implements SaleService {
 
         customer.ifPresent(cus -> {
             cus.setRecentPurchaseDateAndTime(LocalDateTime.now());
-            Double totalPoints = dto.getTotal() / 1000.0;
+            Double totalPoints = dto
+                    .getSaleDetailsList()
+                    .stream()
+                    .mapToDouble(SaleDetailDTO::getTotal)
+                    .sum() / 100.0;
             totalPoints = Double.valueOf(df.format(totalPoints));
             cus.setTotalPoints(cus.getTotalPoints() + totalPoints);
 
@@ -111,7 +116,7 @@ public class SaleServiceImpl implements SaleService {
             System.out.print(cus);
             customerRepository.save(cus);
         });
-        LOGGER.info("Sale request completed "+sale.getSaleId());
+        LOGGER.info("Sale request completed {}", sale.getSaleId());
     }
 
     @Override
@@ -122,49 +127,71 @@ public class SaleServiceImpl implements SaleService {
         if (between >= 3) {
             throw new RefundNotAvailableException("Refund Not Available for " + id);
         }
-        return SaleDTO.builder().saleId(sale.getSaleId()).paymentDescription(sale.getPaymentDescription()).total(sale.getTotal()).customerId(sale.getCustomer()!=null?sale.getCustomer().getCustomerId():"No Customer").build();
+        return SaleDTO.builder().saleId(sale.getSaleId()).paymentDescription(sale.getPaymentDescription()).customerId(sale.getCustomer() != null ? sale.getCustomer().getCustomerId() : "No Customer").build();
     }
 
     @Override
-    public SaleDetailDTO getSaleItem(String orderId, String itemId) {
+    public List<SaleDetailDTO> getSaleItem(String orderId, String itemId) {
         Sale sale = saleRepository.findById(orderId).orElseThrow(() -> new NotFoundException("Sale Not Found " + orderId));
         List<SaleDetails> saleDetailsList = sale.getSaleDetailsList();
-        for(SaleDetails saleDetails : saleDetailsList) {
+        List<SaleDetailDTO> saleDetailDTOS = new ArrayList<>();
+        for (SaleDetails saleDetails : saleDetailsList) {
             if (saleDetails.getItem().getItemId().equalsIgnoreCase(itemId)) {
-                return SaleDetailDTO.builder().description(saleDetails.getName()).price(saleDetails.getPrice()).quantity(saleDetails.getQty()).size(saleDetails.getSize()).total(saleDetails.getTotal()).build();
+                saleDetailDTOS.add(SaleDetailDTO.builder().description(saleDetails.getName()).itemId(saleDetails.getItem().getItemId()).price(saleDetails.getPrice()).quantity(saleDetails.getQty()).size(saleDetails.getSize()).total(saleDetails.getTotal()).build());
             }
         }
-        throw new NotFoundException("Item not found in the sale");
+        return saleDetailDTOS;
     }
 
     @Override
     public void refundSaleItem(RefundDTO dto) {
         LOGGER.info("Refund sale item request received");
-        Stock stock = stocksRepository.findByItemId(dto.getItemId().toLowerCase()).orElseThrow(() -> new NotFoundException("Stock not found " + dto.getItemId()));
         Item item = inventoryRepository.findById(dto.getItemId().toLowerCase()).orElseThrow(() -> new NotFoundException("Inventory not found " + dto.getItemId()));
-        item.setQuantity(item.getQuantity() + Integer.parseInt(dto.getQty()));
-        switch (dto.getSize()) {
-            case "40":
-                stock.setSize40(stock.getSize40() + Integer.parseInt(dto.getQty()));
-                break;
-            case "41":
-                stock.setSize41(stock.getSize41() + Integer.parseInt(dto.getQty()));
-                break;
-            case "42":
-                stock.setSize42(stock.getSize42() + Integer.parseInt(dto.getQty()));
-                break;
-            case "43":
-                stock.setSize43(stock.getSize43() + Integer.parseInt(dto.getQty()));
-                break;
-            case "44":
-                stock.setSize44(stock.getSize44() + Integer.parseInt(dto.getQty()));
-                break;
-            case "45":
-                stock.setSize45(stock.getSize45() + Integer.parseInt(dto.getQty()));
-                break;
-        }
+        Stock stock = stocksRepository.findByItemId(dto.getItemId()).orElseThrow(() -> new NotFoundException("Stock not found " + dto.getItemId()));
+        Sale sale = saleRepository.findById(dto.getOrderId()).orElseThrow(() -> new NotFoundException("Sale not found " + dto.getOrderId()));
+        List<SaleDetails> saleDetailsList = sale.getSaleDetailsList();
 
-        inventoryRepository.save(item);
+        Iterator<SaleDetails> iterator = saleDetailsList.iterator();
+
+        while (iterator.hasNext()) {
+            SaleDetails saleDetails = iterator.next();
+
+            if (saleDetails.getItem().getItemId().equalsIgnoreCase(dto.getItemId()) && saleDetails.getSize().equalsIgnoreCase(dto.getSize())) {
+
+                saleDetails.setQty(saleDetails.getQty() - dto.getQty());
+                saleDetails.setTotal(saleDetails.getPrice() * saleDetails.getQty());
+                item.setQuantity(item.getQuantity() + dto.getQty());
+
+                switch (dto.getSize()) {
+                    case "40":
+                        stock.setSize40(stock.getSize40() + dto.getQty());
+                        break;
+                    case "41":
+                        stock.setSize41(stock.getSize41() + dto.getQty());
+                        break;
+                    case "42":
+                        stock.setSize42(stock.getSize42() + dto.getQty());
+                        break;
+                    case "43":
+                        stock.setSize43(stock.getSize43() + dto.getQty());
+                        break;
+                    case "44":
+                        stock.setSize44(stock.getSize44() + dto.getQty());
+                        break;
+                    case "45":
+                        stock.setSize45(stock.getSize45() + dto.getQty());
+                        break;
+                }
+                if (saleDetails.getQty() == 0) {
+                    iterator.remove();
+                }
+                if (saleDetails.getQty() < 0) {
+                    throw new RefundNotAvailableException("Invalid quantity entered for Id " + dto.getOrderId());
+                }
+            }
+        }
         stocksRepository.save(stock);
+        saleRepository.save(sale);
+        inventoryRepository.save(item);
     }
 }

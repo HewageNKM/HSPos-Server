@@ -2,7 +2,6 @@ package com.nadunkawishika.helloshoesapplicationserver.api;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.CustomDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Stock;
 import com.nadunkawishika.helloshoesapplicationserver.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

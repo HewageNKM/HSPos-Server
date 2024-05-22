@@ -4,12 +4,14 @@ import com.nadunkawishika.helloshoesapplicationserver.dto.RefundDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDetailDTO;
 
+import java.util.List;
+
 public interface SaleService {
     void addSale(SaleDTO sale);
 
     SaleDTO getSale(String id);
 
-    SaleDetailDTO getSaleItem(String id, String itemId);
+    List<SaleDetailDTO> getSaleItem(String id, String itemId);
 
     void refundSaleItem(RefundDTO dto);
 }
