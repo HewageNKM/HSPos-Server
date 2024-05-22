@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/sales")
 @RequiredArgsConstructor
@@ -36,7 +38,7 @@ public class Sale {
 
     @Secured({"ADMIN","USER"})
     @GetMapping("/items")
-    public SaleDetailDTO getSaleItem(@RequestParam(name = "itemId") String itemId, @RequestParam(name = "orderId") String orderId) {
+    public List<SaleDetailDTO> getSaleItem(@RequestParam(name = "itemId") String itemId, @RequestParam(name = "orderId") String orderId) {
         LOGGER.info("Get sale item request received");
         return saleService.getSaleItem(orderId,itemId);
     }

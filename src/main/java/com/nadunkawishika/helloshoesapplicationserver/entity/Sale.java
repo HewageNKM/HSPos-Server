@@ -22,7 +22,6 @@ public class Sale {
     private String saleId;
     private LocalDate date;
     private LocalTime time;
-    private Double total;
     private String paymentDescription;
     private String cashierName;
 

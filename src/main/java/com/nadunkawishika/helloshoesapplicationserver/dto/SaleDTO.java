@@ -17,8 +17,6 @@ public class SaleDTO {
     private String customerId;
     @NotNull(message = "Sale date cannot be empty")
     private List<SaleDetailDTO> saleDetailsList;
-    @NotNull(message = "Sale time cannot be empty")
-    private Double total;
     @NotNull(message = "Payment description cannot be empty")
     private String paymentDescription;
 }

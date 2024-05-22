@@ -12,6 +12,9 @@ import org.hibernate.validator.constraints.Length;
 @Data
 @Builder
 public class RefundDTO {
+    @NotNull(message = "Order ID is required")
+    @Length(min = 8, max = 15, message = "Order ID must be between 8 and 15 characters")
+    private String orderId;
     @NotNull(message = "Item ID is required")
     @Length(min = 8, max = 20, message = "Item ID must be between 8 and 20 characters")
     private String ItemId;
@@ -19,5 +22,5 @@ public class RefundDTO {
     @Length(max = 2, message = "Description must be 2 characters")
     private String size;
     @NotNull(message = "Quantity is required")
-    private String qty;
+    private Integer qty;
 }
