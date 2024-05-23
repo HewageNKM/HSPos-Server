@@ -15,4 +15,7 @@ public interface InventoryRepository extends JpaRepository<Item, String> {
 
     @Query(value = "SELECT * from item where supplier_id = ?1", nativeQuery = true)
     Optional<Item> findBySupplierId(String itemId);
+
+    @Query(value = "SELECT * from item where availability=1", nativeQuery = true)
+    List<Item>findByIdAndAvailability();
 }

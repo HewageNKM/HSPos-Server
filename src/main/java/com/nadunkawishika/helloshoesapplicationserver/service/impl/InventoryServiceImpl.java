@@ -41,7 +41,7 @@ public class InventoryServiceImpl implements InventoryService {
     public List<ItemDTO> getAllItems() {
         LOGGER.info("Get All Items Request");
         List<ItemDTO> itemDTOS = new ArrayList<>();
-        for (Item item : inventoryRepository.findAll()) {
+        for (Item item : inventoryRepository.findByIdAndAvailability()) {
             getItemDTOs(itemDTOS, item);
         }
         return itemDTOS;
@@ -103,6 +103,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .profitMargin(profitMargin)
                 .supplier(supplier)
                 .stock(stock)
+                .availability(true)
                 .build();
 
         stock.setItem(item);
@@ -135,7 +136,8 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public void deleteItem(String id) {
-        inventoryRepository.deleteById(id);
+        Item item = inventoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        item.setAvailability(false);
         LOGGER.info("Item Deleted: {}", id);
     }
 
