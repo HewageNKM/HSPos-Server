@@ -129,7 +129,7 @@ public class InventoryServiceImpl implements InventoryService {
         item.setExpectedProfit(expectedProfit);
         item.setProfitMargin(profitMargin);
         item.setSupplier(supplier);
-        item.setImage(image != null ? imageUtil.encodeImage(image) : null);
+        item.setImage(image != null ? imageUtil.encodeImage(image):item.getImage());
         inventoryRepository.save(item);
         LOGGER.info("Item Updated: {}", item.getItemId());
     }
