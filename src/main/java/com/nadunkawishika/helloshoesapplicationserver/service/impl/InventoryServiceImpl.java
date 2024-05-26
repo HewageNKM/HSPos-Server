@@ -132,7 +132,7 @@ public class InventoryServiceImpl implements InventoryService {
         item.setExpectedProfit(expectedProfit);
         item.setProfitMargin(profitMargin);
         item.setSupplier(supplier);
-        item.setImage(image != null ? imageUtil.encodeImage(image):item.getImage());
+        item.setImage(image != null ? imageUtil.encodeImage(image) : item.getImage());
         inventoryRepository.save(item);
         LOGGER.info("Item Updated: {}", item.getItemId());
     }
@@ -158,7 +158,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public ItemDTO getItem(String id) {
         LOGGER.info("Get Item Request: {}", id);
-        Item item = inventoryRepository.findByAvailabilityAndItemId(true,id).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        Item item = inventoryRepository.findByAvailabilityAndItemId(true, id).orElseThrow(() -> new NotFoundException("Item Not Found"));
         return ItemDTO
                 .builder()
                 .itemId(item.getItemId())
@@ -232,8 +232,10 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public ItemDTO getPopularItem(Integer range) {
-        SaleDetails saleDetails = saleDetailsRepository.findPopularItem(range).orElseThrow(() -> new NotFoundException("Item Not Found"));
-        Item item = saleDetails.getItem();
+        List<Object[]> popularItem = saleDetailsRepository.findPopularItem(range).orElseThrow(() -> new NotFoundException("Popular Item Not Found"));
+        String itemId = popularItem.getFirst()[0].toString();
+        Item item = inventoryRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        LOGGER.info("Popular Item Found: {}", itemId);
         return ItemDTO
                 .builder()
                 .itemId(item.getItemId())
