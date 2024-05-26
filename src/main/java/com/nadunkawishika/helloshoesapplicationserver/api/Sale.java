@@ -1,5 +1,6 @@
 package com.nadunkawishika.helloshoesapplicationserver.api;
 
+import com.nadunkawishika.helloshoesapplicationserver.dto.OverViewDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.RefundDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDetailDTO;
@@ -48,5 +49,12 @@ public class Sale {
     public void refundSaleItem(@Validated @RequestBody RefundDTO dto) {
         LOGGER.info("Refund sale item request received");
         saleService.refundSaleItem(dto);
+    }
+
+    @Secured("ADMIN")
+    @GetMapping("/overview")
+    public OverViewDTO getDayOverview() {
+       LOGGER.info("Get day overview request received");
+        return saleService.getOverview();
     }
 }

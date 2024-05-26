@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nadunkawishika.helloshoesapplicationserver.dto.CustomDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Item;
-import com.nadunkawishika.helloshoesapplicationserver.entity.SaleDetails;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Stock;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Supplier;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
@@ -233,6 +232,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public ItemDTO getPopularItem(Integer range) {
         List<Object[]> popularItem = saleDetailsRepository.findPopularItem(range).orElseThrow(() -> new NotFoundException("Popular Item Not Found"));
+        if (popularItem.isEmpty()) throw new NotFoundException("Popular Item Not Found");
         String itemId = popularItem.getFirst()[0].toString();
         Item item = inventoryRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item Not Found"));
         LOGGER.info("Popular Item Found: {}", itemId);
