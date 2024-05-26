@@ -13,9 +13,8 @@ public interface InventoryRepository extends JpaRepository<Item, String> {
     @Query(value = "SELECT * from item where description LIKE %?1% OR item_id LIKE %?1% OR buying_price LIKE %?1% OR category LIKE %?1% OR selling_price LIKE %?1% OR expected_profit LIKE %?1% OR profit_margin LIKE %?1% OR supplier_id LIKE %?1% OR stock_id LIKE %?1% OR supplier_name LIKE %?1% OR quantity LIKE %?1%", nativeQuery = true)
     List<Item> filterItems(String pattern);
 
-    @Query(value = "SELECT * from item where supplier_id = ?1", nativeQuery = true)
-    Optional<Item> findBySupplierId(String itemId);
+    @Query(value = "SELECT * from item where availability=?1", nativeQuery = true)
+    List<Item>findByAvailability(Boolean availability);
 
-    @Query(value = "SELECT * from item where availability=1", nativeQuery = true)
-    List<Item>findByIdAndAvailability();
+    Optional<Item> findByAvailabilityAndItemId(Boolean availability, String itemId);
 }

@@ -2,14 +2,13 @@ package com.nadunkawishika.helloshoesapplicationserver.service;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.CustomDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.ItemDTO;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Stock;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
 public interface InventoryService {
-    List<ItemDTO> getAllItems();
+    List<ItemDTO> getAllByAvailability(Boolean availability);
 
     void addItem(String dto, MultipartFile image) throws IOException;
 
@@ -17,7 +16,7 @@ public interface InventoryService {
 
     void deleteItem(String id);
 
-    List<ItemDTO> filterItems(String pattern);
+    List<ItemDTO> filterItems(String pattern, Boolean availability);
 
     ItemDTO getItem(String id);
 
@@ -28,4 +27,8 @@ public interface InventoryService {
     List<CustomDTO> filterStocks(String pattern);
 
     CustomDTO getStock(String id);
+
+    void activateItem(String id);
+
+    ItemDTO getPopularItem(Integer filter);
 }
