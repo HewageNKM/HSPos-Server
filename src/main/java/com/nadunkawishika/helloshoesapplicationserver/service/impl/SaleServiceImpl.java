@@ -1,5 +1,6 @@
 package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 
+import com.nadunkawishika.helloshoesapplicationserver.dto.OverViewDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.RefundDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDetailDTO;
@@ -193,5 +194,18 @@ public class SaleServiceImpl implements SaleService {
         stocksRepository.save(stock);
         saleRepository.save(sale);
         inventoryRepository.save(item);
+    }
+
+    @Override
+    public OverViewDTO getOverview() {
+        LOGGER.info("Get day overview request received");
+        List<Object[]> billCount = saleRepository.findBillCount();
+        if (billCount.isEmpty()) throw new NotFoundException("No Sales Found");
+
+        int count = Integer.parseInt(billCount.getFirst()[0].toString());
+        List<Sale> saleList = saleRepository.getAllTodaySales().orElseThrow(() -> new NotFoundException("No Sales Found"));
+        Double totalSales = saleList.stream().mapToDouble(sale -> sale.getSaleDetailsList().stream().mapToDouble(SaleDetails::getTotal).sum()).sum();
+        Double totalProfit = saleList.stream().mapToDouble(sale -> sale.getSaleDetailsList().stream().mapToDouble(saleDetails -> saleDetails.getQty() * saleDetails.getItem().getExpectedProfit()).sum()).sum();
+        return OverViewDTO.builder().totalSales(Double.valueOf(df.format(totalSales))).totalProfit(Double.valueOf(df.format(totalProfit))).totalBills(count).build();
     }
 }

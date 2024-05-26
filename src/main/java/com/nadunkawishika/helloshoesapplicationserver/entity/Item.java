@@ -36,19 +36,21 @@ public class Item {
     private Double expectedProfit;
     @Column(nullable = false, length = 50)
     private Double profitMargin;
+    @Column(nullable = false, length = 5,columnDefinition = "boolean default true")
+    private Boolean availability;
 
     @JoinColumn(referencedColumnName = "supplier_name")
     private String supplierName;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "supplier_Id")
     private Supplier supplier;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     private List<SaleDetails> saleDetailsList;
 

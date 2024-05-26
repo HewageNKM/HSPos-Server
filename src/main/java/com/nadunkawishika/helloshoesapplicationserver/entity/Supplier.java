@@ -36,7 +36,7 @@ public class Supplier {
     @Column(nullable = false, length = 50)
     private String email;
 
-    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "supplier", cascade = {CascadeType.DETACH,CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH}, fetch = FetchType.EAGER)
     private List<Item> items;
 
 }

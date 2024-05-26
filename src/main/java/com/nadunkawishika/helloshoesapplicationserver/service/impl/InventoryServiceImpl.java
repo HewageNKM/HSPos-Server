@@ -8,6 +8,7 @@ import com.nadunkawishika.helloshoesapplicationserver.entity.Stock;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Supplier;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
 import com.nadunkawishika.helloshoesapplicationserver.repository.InventoryRepository;
+import com.nadunkawishika.helloshoesapplicationserver.repository.SaleDetailsRepository;
 import com.nadunkawishika.helloshoesapplicationserver.repository.StocksRepository;
 import com.nadunkawishika.helloshoesapplicationserver.repository.SupplierRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.InventoryService;
@@ -35,13 +36,14 @@ public class InventoryServiceImpl implements InventoryService {
     private final SupplierRepository supplierRepository;
     private final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(InventoryServiceImpl.class);
     private final DecimalFormat df = new DecimalFormat("0.00");
+    private final SaleDetailsRepository saleDetailsRepository;
 
 
     @Override
-    public List<ItemDTO> getAllItems() {
+    public List<ItemDTO> getAllByAvailability(Boolean availability) {
         LOGGER.info("Get All Items Request");
         List<ItemDTO> itemDTOS = new ArrayList<>();
-        for (Item item : inventoryRepository.findAll()) {
+        for (Item item : inventoryRepository.findByAvailability(availability)) {
             getItemDTOs(itemDTOS, item);
         }
         return itemDTOS;
@@ -103,6 +105,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .profitMargin(profitMargin)
                 .supplier(supplier)
                 .stock(stock)
+                .availability(true)
                 .build();
 
         stock.setItem(item);
@@ -128,22 +131,24 @@ public class InventoryServiceImpl implements InventoryService {
         item.setExpectedProfit(expectedProfit);
         item.setProfitMargin(profitMargin);
         item.setSupplier(supplier);
-        item.setImage(image != null ? imageUtil.encodeImage(image) : null);
+        item.setImage(image != null ? imageUtil.encodeImage(image) : item.getImage());
         inventoryRepository.save(item);
         LOGGER.info("Item Updated: {}", item.getItemId());
     }
 
     @Override
     public void deleteItem(String id) {
-        inventoryRepository.deleteById(id);
+        Item item = inventoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        item.setAvailability(false);
+        inventoryRepository.save(item);
         LOGGER.info("Item Deleted: {}", id);
     }
 
     @Override
-    public List<ItemDTO> filterItems(String pattern) {
+    public List<ItemDTO> filterItems(String pattern, Boolean availability) {
         List<ItemDTO> itemDTOS = new ArrayList<>();
         for (Item item : inventoryRepository.filterItems(pattern)) {
-            getItemDTOs(itemDTOS, item);
+            if (item.getAvailability()) getItemDTOs(itemDTOS, item);
         }
         LOGGER.info("Filtered Items");
         return itemDTOS;
@@ -152,7 +157,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public ItemDTO getItem(String id) {
         LOGGER.info("Get Item Request: {}", id);
-        Item item = inventoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        Item item = inventoryRepository.findByAvailabilityAndItemId(true, id).orElseThrow(() -> new NotFoundException("Item Not Found"));
         return ItemDTO
                 .builder()
                 .itemId(item.getItemId())
@@ -213,6 +218,37 @@ public class InventoryServiceImpl implements InventoryService {
                 .size44(stock.getSize44())
                 .size45(stock.getSize45())
                 .itemId(stock.getItem().getItemId())
+                .build();
+    }
+
+    @Override
+    public void activateItem(String id) {
+        Item item = inventoryRepository.findById(id).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        item.setAvailability(true);
+        inventoryRepository.save(item);
+        LOGGER.info("Item Activated: {}", id);
+    }
+
+    @Override
+    public ItemDTO getPopularItem(Integer range) {
+        List<Object[]> popularItem = saleDetailsRepository.findPopularItem(range).orElseThrow(() -> new NotFoundException("Popular Item Not Found"));
+        if (popularItem.isEmpty()) throw new NotFoundException("Popular Item Not Found");
+        String itemId = popularItem.getFirst()[0].toString();
+        Item item = inventoryRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Item Not Found"));
+        LOGGER.info("Popular Item Found: {}", itemId);
+        return ItemDTO
+                .builder()
+                .itemId(item.getItemId())
+                .description(item.getDescription())
+                .image(item.getImage())
+                .expectedProfit(item.getExpectedProfit())
+                .profitMargin(item.getProfitMargin())
+                .quantity(item.getQuantity())
+                .supplierName(item.getSupplierName())
+                .supplierId(item.getSupplier().getSupplierId())
+                .buyingPrice(item.getBuyingPrice())
+                .sellingPrice(item.getSellingPrice())
+                .category(item.getCategory())
                 .build();
     }
 

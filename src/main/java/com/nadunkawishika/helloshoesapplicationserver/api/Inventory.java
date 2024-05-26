@@ -26,9 +26,16 @@ public class Inventory {
 
     @Secured({"ADMIN", "USER"})
     @GetMapping
-    public List<ItemDTO> getAllItems() {
+    public List<ItemDTO> getAllItems(@RequestParam(name = "availability") Boolean availability) {
         LOGGER.info("Get All Items Request");
-        return inventoryService.getAllItems();
+        return inventoryService.getAllByAvailability(availability);
+    }
+
+    @Secured({"ADMIN", "USER"})
+    @GetMapping("/popular")
+    public ItemDTO getPopularItem(@RequestParam(name = "range") Integer range) {
+        LOGGER.info("Get Popular Item Request");
+        return inventoryService.getPopularItem(range);
     }
 
     @Secured({"ADMIN", "USER"})
@@ -62,9 +69,9 @@ public class Inventory {
 
     @Secured({"ADMIN", "USER"})
     @GetMapping("/filter/{pattern}")
-    public List<ItemDTO> filterItems(@PathVariable String pattern) {
+    public List<ItemDTO> filterItems(@PathVariable String pattern, @RequestParam(name = "availability") Boolean availability) {
         LOGGER.info("Filter Items Request: {}", pattern);
-        return inventoryService.filterItems(pattern);
+        return inventoryService.filterItems(pattern, availability);
     }
 
     @Secured({"ADMIN", "USER"})
@@ -89,7 +96,12 @@ public class Inventory {
             LOGGER.error("Update Item Request Failed: {}", e.getMessage());
         }
     }
-
+    @Secured("ADMIN")
+    @PutMapping("/activate/{id}")
+    public void activateItem(@PathVariable String id) {
+        LOGGER.info("Activate Item Request");
+        inventoryService.activateItem(id);
+    }
     @Secured("ADMIN")
     @PutMapping("/stocks/{id}")
     public void updateStocks(@PathVariable String id, @Validated @RequestBody CustomDTO dto) {
