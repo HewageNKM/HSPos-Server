@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface SaleService {
-    ResponseEntity<byte[]> addSale(SaleDTO sale) throws IOException;
+    ResponseEntity<Object> addSale(SaleDTO sale) throws IOException;
 
     SaleDTO getSale(String id);
 

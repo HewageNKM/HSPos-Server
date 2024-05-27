@@ -7,13 +7,12 @@ import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.RefundNotAvailableException;
 import com.nadunkawishika.helloshoesapplicationserver.repository.*;
 import com.nadunkawishika.helloshoesapplicationserver.service.SaleService;
+import com.nadunkawishika.helloshoesapplicationserver.util.Base64Encoder;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import com.nadunkawishika.helloshoesapplicationserver.util.InvoiceUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,13 +39,14 @@ public class SaleServiceImpl implements SaleService {
     private final CustomerRepository customerRepository;
     private final StocksRepository stocksRepository;
     private final InventoryRepository inventoryRepository;
+    private final Base64Encoder base64Encoder;
     private final InvoiceUtil invoiceUtil;
     private final DecimalFormat df = new DecimalFormat("0.00");
     private final Logger LOGGER = LoggerFactory.getLogger(SaleServiceImpl.class);
 
 
     @Override
-    public ResponseEntity<byte[]> addSale(SaleDTO dto) throws IOException {
+    public ResponseEntity<Object> addSale(SaleDTO dto) throws IOException {
         LOGGER.info("Sale request received");
         AtomicReference<Double> addedPoints = new AtomicReference<>(0.0);
         Optional<Customer> customer = Optional.empty();
@@ -122,16 +122,11 @@ public class SaleServiceImpl implements SaleService {
             System.out.print(cus);
             customerRepository.save(cus);
         });
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("filename", sale.getSaleId()+".pdf");
         InvoiceDTO invoiceDTO = InvoiceDTO.builder().saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailsList).cashierName(sale.getCashierName().toUpperCase()).customerId(sale.getCustomer() != null ? sale.getCustomer().getCustomerId().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).addedPoints(addedPoints.get()).totalPoints(sale.getCustomer() != null ? sale.getCustomer().getTotalPoints() : null).build();
         byte[] invoice = invoiceUtil.getInvoice(invoiceDTO);
+        String s = base64Encoder.encodePdf(invoice);
         LOGGER.info("Sale request completed {}", sale.getSaleId());
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(invoice);
+        return ResponseEntity.ok().body(s);
     }
 
     @Override

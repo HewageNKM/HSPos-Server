@@ -27,7 +27,7 @@ public class Sale {
 
     @Secured({"ADMIN", "USER"})
     @PostMapping
-    public ResponseEntity<byte[]> addSale(@Validated @RequestBody SaleDTO sale) {
+    public ResponseEntity<Object> addSale(@Validated @RequestBody SaleDTO sale) {
         LOGGER.info("Sale request received");
         try {
             return saleService.addSale(sale);
