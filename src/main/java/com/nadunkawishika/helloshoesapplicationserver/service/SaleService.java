@@ -4,11 +4,13 @@ import com.nadunkawishika.helloshoesapplicationserver.dto.OverViewDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.RefundDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDetailDTO;
+import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface SaleService {
-    void addSale(SaleDTO sale);
+    ResponseEntity<byte[]> addSale(SaleDTO sale) throws IOException;
 
     SaleDTO getSale(String id);
 

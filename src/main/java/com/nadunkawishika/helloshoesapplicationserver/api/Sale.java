@@ -8,11 +8,13 @@ import com.nadunkawishika.helloshoesapplicationserver.service.SaleService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -23,28 +25,33 @@ public class Sale {
     private final SaleService saleService;
     private final Logger LOGGER = LoggerFactory.getLogger(Sale.class);
 
-    @Secured({"ADMIN","USER"})
+    @Secured({"ADMIN", "USER"})
     @PostMapping
-    public void addSale(@Validated @RequestBody SaleDTO sale) {
+    public ResponseEntity<byte[]> addSale(@Validated @RequestBody SaleDTO sale) {
         LOGGER.info("Sale request received");
-        saleService.addSale(sale);
+        try {
+            return saleService.addSale(sale);
+        } catch (IOException e) {
+            LOGGER.error("Error occurred while adding sale", e);
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    @Secured({"ADMIN","USER"})
+    @Secured({"ADMIN", "USER"})
     @GetMapping("/{id}")
     public SaleDTO getSale(@PathVariable String id) {
         LOGGER.info("Get a sale request received");
         return saleService.getSale(id);
     }
 
-    @Secured({"ADMIN","USER"})
+    @Secured({"ADMIN", "USER"})
     @GetMapping("/items")
     public List<SaleDetailDTO> getSaleItem(@RequestParam(name = "itemId") String itemId, @RequestParam(name = "orderId") String orderId) {
         LOGGER.info("Get sale item request received");
-        return saleService.getSaleItem(orderId,itemId);
+        return saleService.getSaleItem(orderId, itemId);
     }
 
-    @Secured({"ADMIN","USER"})
+    @Secured({"ADMIN", "USER"})
     @PostMapping("/refund")
     public void refundSaleItem(@Validated @RequestBody RefundDTO dto) {
         LOGGER.info("Refund sale item request received");
@@ -54,7 +61,7 @@ public class Sale {
     @Secured("ADMIN")
     @GetMapping("/overview")
     public OverViewDTO getDayOverview() {
-       LOGGER.info("Get day overview request received");
+        LOGGER.info("Get day overview request received");
         return saleService.getOverview();
     }
 }
