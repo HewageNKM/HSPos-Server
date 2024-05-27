@@ -7,7 +7,7 @@ import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions
 import com.nadunkawishika.helloshoesapplicationserver.repository.EmployeeRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.EmployeeService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
-import com.nadunkawishika.helloshoesapplicationserver.util.ImageUtil;
+import com.nadunkawishika.helloshoesapplicationserver.util.Base64Encoder;
 import com.nadunkawishika.helloshoesapplicationserver.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final Mapper mapper;
     private final Logger LOGGER = LoggerFactory.getLogger(EmployeeServiceImpl.class);
     private final EmployeeRepository employeeRepository;
-    private final ImageUtil imageUtil;
+    private final Base64Encoder base64Encoder;
     private final ObjectMapper json;
 
     @Override
@@ -74,7 +74,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .designation(dto.getDesignation().toLowerCase())
                 .role(dto.getRole())
                 .status(dto.getStatus())
-                .image(image != null ? imageUtil.encodeImage(image) : dto.getImage())
+                .image(image != null ? base64Encoder.encodeImage(image) : dto.getImage())
                 .attachBranch(dto.getAttachBranch().toLowerCase())
                 .guardianName(dto.getGuardianName().toLowerCase())
                 .guardianContact(dto.getGuardianContact())
@@ -112,7 +112,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             dbEmployee.setEmail(dto.getEmail().toLowerCase());
 
             if (image != null) {
-                dbEmployee.setImage(imageUtil.encodeImage(image));
+                dbEmployee.setImage(base64Encoder.encodeImage(image));
             }
             employeeRepository.save(dbEmployee);
             LOGGER.info("Employee Updated");

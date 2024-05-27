@@ -13,7 +13,7 @@ import com.nadunkawishika.helloshoesapplicationserver.repository.StocksRepositor
 import com.nadunkawishika.helloshoesapplicationserver.repository.SupplierRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.InventoryService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
-import com.nadunkawishika.helloshoesapplicationserver.util.ImageUtil;
+import com.nadunkawishika.helloshoesapplicationserver.util.Base64Encoder;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.springframework.data.domain.Page;
@@ -35,7 +35,7 @@ public class InventoryServiceImpl implements InventoryService {
     private final InventoryRepository inventoryRepository;
     private final StocksRepository stocksRepository;
     private final ObjectMapper objectMapper;
-    private final ImageUtil imageUtil;
+    private final Base64Encoder base64Encoder;
     private final SupplierRepository supplierRepository;
     private final Logger LOGGER = org.slf4j.LoggerFactory.getLogger(InventoryServiceImpl.class);
     private final DecimalFormat df = new DecimalFormat("0.00");
@@ -101,7 +101,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .description(dto.getDescription().toLowerCase())
                 .itemId(id)
                 .category((dto.getOccasion() + "/" + dto.getVerities() + "/" + dto.getGender()).toLowerCase())
-                .image(image != null ? imageUtil.encodeImage(image) : null)
+                .image(image != null ? base64Encoder.encodeImage(image) : null)
                 .buyingPrice(dto.getBuyingPrice())
                 .sellingPrice(dto.getSellingPrice())
                 .quantity(0)
@@ -136,7 +136,7 @@ public class InventoryServiceImpl implements InventoryService {
         item.setExpectedProfit(expectedProfit);
         item.setProfitMargin(profitMargin);
         item.setSupplier(supplier);
-        item.setImage(image != null ? imageUtil.encodeImage(image) : item.getImage());
+        item.setImage(image != null ? base64Encoder.encodeImage(image) : item.getImage());
         inventoryRepository.save(item);
         LOGGER.info("Item Updated: {}", item.getItemId());
     }

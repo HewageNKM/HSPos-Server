@@ -1,23 +1,24 @@
 package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 
-import com.nadunkawishika.helloshoesapplicationserver.dto.OverViewDTO;
-import com.nadunkawishika.helloshoesapplicationserver.dto.RefundDTO;
-import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDTO;
-import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDetailDTO;
+import com.nadunkawishika.helloshoesapplicationserver.dto.*;
 import com.nadunkawishika.helloshoesapplicationserver.entity.*;
 import com.nadunkawishika.helloshoesapplicationserver.enums.Level;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.RefundNotAvailableException;
 import com.nadunkawishika.helloshoesapplicationserver.repository.*;
 import com.nadunkawishika.helloshoesapplicationserver.service.SaleService;
+import com.nadunkawishika.helloshoesapplicationserver.util.Base64Encoder;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
+import com.nadunkawishika.helloshoesapplicationserver.util.InvoiceUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Transactional
@@ -37,13 +39,16 @@ public class SaleServiceImpl implements SaleService {
     private final CustomerRepository customerRepository;
     private final StocksRepository stocksRepository;
     private final InventoryRepository inventoryRepository;
+    private final Base64Encoder base64Encoder;
+    private final InvoiceUtil invoiceUtil;
     private final DecimalFormat df = new DecimalFormat("0.00");
     private final Logger LOGGER = LoggerFactory.getLogger(SaleServiceImpl.class);
 
 
     @Override
-    public void addSale(SaleDTO dto) {
+    public ResponseEntity<Object> addSale(SaleDTO dto) throws IOException {
         LOGGER.info("Sale request received");
+        AtomicReference<Double> addedPoints = new AtomicReference<>(0.0);
         Optional<Customer> customer = Optional.empty();
         if (dto.getCustomerId() != null) {
             customer = customerRepository.findById(dto.getCustomerId());
@@ -97,13 +102,13 @@ public class SaleServiceImpl implements SaleService {
 
         customer.ifPresent(cus -> {
             cus.setRecentPurchaseDateAndTime(LocalDateTime.now());
-            Double totalPoints = dto
-                    .getSaleDetailsList()
-                    .stream()
-                    .mapToDouble(SaleDetailDTO::getTotal)
-                    .sum() / 100.0;
-            totalPoints = Double.valueOf(df.format(totalPoints));
-            cus.setTotalPoints(cus.getTotalPoints() + totalPoints);
+           addedPoints.set(dto
+                   .getSaleDetailsList()
+                   .stream()
+                   .mapToDouble(SaleDetailDTO::getTotal)
+                   .sum() / 100.0);
+            addedPoints.set(Double.valueOf(df.format(addedPoints.get())));
+            cus.setTotalPoints(cus.getTotalPoints() + addedPoints.get());
 
             if (cus.getTotalPoints() < 50) {
                 cus.setLevel(Level.New);
@@ -117,7 +122,11 @@ public class SaleServiceImpl implements SaleService {
             System.out.print(cus);
             customerRepository.save(cus);
         });
+        InvoiceDTO invoiceDTO = InvoiceDTO.builder().saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailsList).cashierName(sale.getCashierName().toUpperCase()).customerId(sale.getCustomer() != null ? sale.getCustomer().getCustomerId().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).addedPoints(addedPoints.get()).totalPoints(sale.getCustomer() != null ? sale.getCustomer().getTotalPoints() : null).build();
+        byte[] invoice = invoiceUtil.getInvoice(invoiceDTO);
+        String s = base64Encoder.encodePdf(invoice);
         LOGGER.info("Sale request completed {}", sale.getSaleId());
+        return ResponseEntity.ok().body(s);
     }
 
     @Override
