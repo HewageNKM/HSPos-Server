@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface EmployeeService {
-    List<EmployeeDTO> getEmployees();
+    List<EmployeeDTO> getEmployees(int page, int limit);
 
     EmployeeDTO getEmployee(String id);
 

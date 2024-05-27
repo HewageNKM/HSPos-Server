@@ -22,13 +22,13 @@ public class Employee {
 
     @Secured({"ADMIN", "USER"})
     @GetMapping
-    public List<EmployeeDTO> getEmployees(@RequestParam(required = false, name = "pattern") String pattern) {
+    public List<EmployeeDTO> getEmployees(@RequestParam(required = false, name = "pattern") String pattern, @RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "limit", defaultValue = "20") int limit){
         if (pattern != null) {
             LOGGER.info("Filter Employee Request: {}" + pattern);
             return employeeService.filterEmployees(pattern);
         } else {
             LOGGER.info("Get All Employee Request");
-            return employeeService.getEmployees();
+            return employeeService.getEmployees(page,limit);
         }
     }
 
