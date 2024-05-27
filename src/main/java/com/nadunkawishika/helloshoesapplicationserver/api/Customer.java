@@ -25,13 +25,13 @@ public class Customer {
 
     @Secured({"ADMIN","USER"})
     @GetMapping
-    public List<CustomerDTO> getCustomers(@RequestParam(required = false) String pattern) {
+    public List<CustomerDTO> getCustomers(@RequestParam(required = false) String pattern,@RequestParam(name = "page",defaultValue = "0") int page,@RequestParam(name = "limit",defaultValue = "20") int limit){
         if (pattern != null) {
             LOGGER.info("Filter Customers Request: {}", pattern);
-            return customerService.filterCustomers(pattern);
+            return customerService.filterCustomers(pattern,page,limit);
         } else {
             LOGGER.info("Get All Customers Request");
-            return customerService.getCustomers();
+            return customerService.getCustomers(page,limit);
         }
 
     }

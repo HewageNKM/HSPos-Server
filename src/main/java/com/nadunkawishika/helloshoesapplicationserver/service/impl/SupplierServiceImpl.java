@@ -1,7 +1,6 @@
 package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 
 import com.nadunkawishika.helloshoesapplicationserver.dto.SupplierDTO;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Item;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Supplier;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
 import com.nadunkawishika.helloshoesapplicationserver.repository.InventoryRepository;
@@ -12,6 +11,8 @@ import com.nadunkawishika.helloshoesapplicationserver.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +29,10 @@ public class SupplierServiceImpl implements SupplierService {
     private final Logger LOGGER = LoggerFactory.getLogger(SupplierServiceImpl.class);
 
     @Override
-    public List<SupplierDTO> getSuppliers() {
-        return mapper.toSuppliersEntityToDTOs(supplierRepository.findAll());
+    public List<SupplierDTO> getSuppliers(int page, int limit) {
+        LOGGER.info("Get All Suppliers Request");
+        Pageable pageable = PageRequest.of(page, limit);
+        return mapper.toSuppliersEntityToDTOs(supplierRepository.findAll(pageable).getContent());
     }
 
     @Override

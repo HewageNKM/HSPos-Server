@@ -12,6 +12,10 @@ import com.nadunkawishika.helloshoesapplicationserver.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,8 +32,10 @@ public class CustomerServiceImpl implements CustomerService {
     private final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
     private final Mapper modelMapper = new Mapper();
 
-    public List<CustomerDTO> getCustomers() {
-        return modelMapper.toCustomersEntityToDTOs(customerRepository.findAll());
+    public List<CustomerDTO> getCustomers(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        LOGGER.info("Get All Customers Request");
+        return modelMapper.toCustomersEntityToDTOs(customerRepository.findAll(pageable).getContent());
     }
 
     @Override
@@ -41,7 +47,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerDTO> filterCustomers(String pattern) {
+    public List<CustomerDTO> filterCustomers(String pattern, int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
         return modelMapper.toCustomersEntityToDTOs(customerRepository.filterCustomers(pattern));
     }
 

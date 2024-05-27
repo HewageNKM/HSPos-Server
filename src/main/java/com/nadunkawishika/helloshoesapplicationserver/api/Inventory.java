@@ -26,9 +26,9 @@ public class Inventory {
 
     @Secured({"ADMIN", "USER"})
     @GetMapping
-    public List<ItemDTO> getAllItems(@RequestParam(name = "availability") Boolean availability) {
+    public List<ItemDTO> getAllItems(@RequestParam(name = "availability") Boolean availability, @RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "limit", defaultValue = "20") int limit) {
         LOGGER.info("Get All Items Request");
-        return inventoryService.getAllByAvailability(availability);
+        return inventoryService.getAllByAvailability(availability, page, limit);
     }
 
     @Secured({"ADMIN", "USER"})
@@ -40,9 +40,9 @@ public class Inventory {
 
     @Secured({"ADMIN", "USER"})
     @GetMapping("/stocks")
-    public List<CustomDTO> getAllStocks() {
+    public List<CustomDTO> getAllStocks(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "limit", defaultValue = "20") int limit){
         LOGGER.info("Get All Stocks Request");
-        return inventoryService.getAllStocks();
+        return inventoryService.getAllStocks(page,limit);
     }
 
     @Secured({"ADMIN", "USER"})

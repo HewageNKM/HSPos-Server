@@ -23,11 +23,11 @@ public class Supplier {
 
     @Secured({"ADMIN","USER"})
     @GetMapping
-    public List<SupplierDTO> getSuppliers(@RequestParam(required = false) String pattern) {
+    public List<SupplierDTO> getSuppliers(@RequestParam(required = false) String pattern, @RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "limit", defaultValue = "20") int limit){
         LOGGER.info("Get Suppliers Request");
         if (pattern == null) {
             LOGGER.info("Get All Suppliers Request");
-            return supplierService.getSuppliers();
+            return supplierService.getSuppliers(page,limit);
         } else {
             LOGGER.info("Filter Suppliers Request: {}", pattern);
             return supplierService.filterSuppliers(pattern);

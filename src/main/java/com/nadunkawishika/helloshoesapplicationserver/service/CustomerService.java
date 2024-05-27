@@ -5,11 +5,11 @@ import com.nadunkawishika.helloshoesapplicationserver.dto.CustomerDTO;
 import java.util.List;
 
 public interface CustomerService {
-    List<CustomerDTO> getCustomers();
+    List<CustomerDTO> getCustomers(int page, int limit);
 
     CustomerDTO getCustomer(String id);
 
-    List<CustomerDTO> filterCustomers(String pattern);
+    List<CustomerDTO> filterCustomers(String pattern, int page, int limit);
 
     void updateCustomer(String id, CustomerDTO dto);
 

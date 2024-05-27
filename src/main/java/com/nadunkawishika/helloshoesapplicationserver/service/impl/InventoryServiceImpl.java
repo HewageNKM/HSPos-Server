@@ -16,6 +16,9 @@ import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import com.nadunkawishika.helloshoesapplicationserver.util.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,10 +43,12 @@ public class InventoryServiceImpl implements InventoryService {
 
 
     @Override
-    public List<ItemDTO> getAllByAvailability(Boolean availability) {
+    public List<ItemDTO> getAllByAvailability(Boolean availability, int page, int limit) {
         LOGGER.info("Get All Items Request");
+        Pageable pageable = PageRequest.of(page, limit);
         List<ItemDTO> itemDTOS = new ArrayList<>();
-        for (Item item : inventoryRepository.findByAvailability(availability)) {
+        Page<Item> byAvailability = inventoryRepository.findByAvailability(availability, pageable);
+        for (Item item : byAvailability) {
             getItemDTOs(itemDTOS, item);
         }
         return itemDTOS;
@@ -175,10 +180,12 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public List<CustomDTO> getAllStocks() {
+    public List<CustomDTO> getAllStocks(int page, int limit) {
         LOGGER.info("Get All Stocks Request");
-        List<Object[]> stockDetails = stocksRepository.getStockDetails();
-        return getCustomDTOS(stockDetails);
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Stock> all = stocksRepository.findAll(pageable);
+        List<Stock> stocks = all.getContent();
+        return getCustomDTOS(stocks);
     }
 
     @Override
@@ -201,9 +208,47 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public List<CustomDTO> filterStocks(String pattern) {
-        List<Object[]> stockDetails = stocksRepository.filterStocks(pattern);
         LOGGER.info("Filtered Stocks");
-        return getCustomDTOS(stockDetails);
+        List<Object[]> objects = stocksRepository.filterStocks(pattern);
+        List<CustomDTO> customDTOS = new ArrayList<>();
+        for (Object[] object : objects) {
+            customDTOS.add(CustomDTO
+                    .builder()
+                    .itemId(object[0].toString())
+                    .stockId(object[1].toString())
+                    .description(object[2].toString())
+                    .supplierId(object[3].toString())
+                    .supplierName(object[4].toString())
+                    .size40(Integer.parseInt(object[5].toString()))
+                    .size41(Integer.parseInt(object[6].toString()))
+                    .size42(Integer.parseInt(object[7].toString()))
+                    .size43(Integer.parseInt(object[8].toString()))
+                    .size44(Integer.parseInt(object[9].toString()))
+                    .size45(Integer.parseInt(object[10].toString()))
+                    .build());
+        }
+        return customDTOS;
+    }
+
+    private List<CustomDTO> getCustomDTOS(List<Stock> stocks) {
+        List<CustomDTO> customDTOS = new ArrayList<>();
+        for (Stock stock : stocks) {
+            customDTOS.add(CustomDTO
+                    .builder()
+                    .itemId(stock.getItem().getItemId())
+                    .stockId(stock.getStockId())
+                    .description(stock.getItem().getDescription())
+                    .supplierId(stock.getItem().getSupplier().getSupplierId())
+                    .supplierName(stock.getItem().getSupplierName())
+                    .size40(stock.getSize40())
+                    .size41(stock.getSize41())
+                    .size42(stock.getSize42())
+                    .size43(stock.getSize43())
+                    .size44(stock.getSize44())
+                    .size45(stock.getSize45())
+                    .build());
+        }
+        return customDTOS;
     }
 
     @Override
@@ -250,28 +295,5 @@ public class InventoryServiceImpl implements InventoryService {
                 .sellingPrice(item.getSellingPrice())
                 .category(item.getCategory())
                 .build();
-    }
-
-    private List<CustomDTO> getCustomDTOS(List<Object[]> stockDetails) {
-        List<CustomDTO> customDTOS = new ArrayList<>();
-        for (Object[] stockDetail : stockDetails) {
-            CustomDTO dto = CustomDTO
-                    .builder()
-                    .stockId(stockDetail[0].toString())
-                    .supplierId(stockDetail[1].toString())
-                    .supplierName(stockDetail[2].toString())
-                    .itemId(stockDetail[3].toString())
-                    .description(stockDetail[4].toString())
-                    .size40(Integer.parseInt(stockDetail[5].toString()))
-                    .size41(Integer.parseInt(stockDetail[6].toString()))
-                    .size42(Integer.parseInt(stockDetail[7].toString()))
-                    .size43(Integer.parseInt(stockDetail[8].toString()))
-                    .size44(Integer.parseInt(stockDetail[9].toString()))
-                    .size45(Integer.parseInt(stockDetail[10].toString()))
-                    .build();
-            customDTOS.add(dto);
-        }
-        LOGGER.info("Custom DTOs Created");
-        return customDTOS;
     }
 }

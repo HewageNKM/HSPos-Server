@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface InventoryService {
-    List<ItemDTO> getAllByAvailability(Boolean availability);
+    List<ItemDTO> getAllByAvailability(Boolean availability, int page, int limit);
 
     void addItem(String dto, MultipartFile image) throws IOException;
 
@@ -20,7 +20,7 @@ public interface InventoryService {
 
     ItemDTO getItem(String id);
 
-    List<CustomDTO> getAllStocks();
+    List<CustomDTO> getAllStocks(int page, int limit);
 
     void updateStock(String id, CustomDTO dto);
 

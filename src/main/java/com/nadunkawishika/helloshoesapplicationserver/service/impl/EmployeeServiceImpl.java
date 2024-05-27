@@ -12,6 +12,8 @@ import com.nadunkawishika.helloshoesapplicationserver.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,9 +33,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final ObjectMapper json;
 
     @Override
-    public List<EmployeeDTO> getEmployees() {
+    public List<EmployeeDTO> getEmployees(int page, int limit) {
         LOGGER.info("Get All Employees Request");
-        return mapper.toEmployeesEntityToDTOs(employeeRepository.findAll());
+        Pageable pageable = PageRequest.of(page, limit);
+        return mapper.toEmployeesEntityToDTOs(employeeRepository.findAll(pageable).getContent());
     }
 
     @Override
