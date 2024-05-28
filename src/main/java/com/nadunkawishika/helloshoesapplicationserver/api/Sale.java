@@ -6,6 +6,7 @@ import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDTO;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SaleDetailDTO;
 import com.nadunkawishika.helloshoesapplicationserver.service.SaleService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -25,16 +25,20 @@ public class Sale {
     private final SaleService saleService;
     private final Logger LOGGER = LoggerFactory.getLogger(Sale.class);
 
+    @SneakyThrows
     @Secured({"ADMIN", "USER"})
     @PostMapping
-    public ResponseEntity<Object> addSale(@Validated @RequestBody SaleDTO sale) {
+    public ResponseEntity<String> addSale(@Validated @RequestBody SaleDTO sale) {
         LOGGER.info("Sale request received");
-        try {
-            return saleService.addSale(sale);
-        } catch (IOException e) {
-            LOGGER.error("Error occurred while adding sale", e);
-            return ResponseEntity.badRequest().build();
-        }
+        return saleService.addSale(sale);
+    }
+
+    @SneakyThrows
+    @Secured({"ADMIN", "USER"})
+    @GetMapping("/invoices/{id}")
+    public ResponseEntity<String> getAInvoice(@PathVariable String id) {
+        LOGGER.info("Invoice request received");
+        return saleService.getAInvoice(id);
     }
 
     @Secured({"ADMIN", "USER"})

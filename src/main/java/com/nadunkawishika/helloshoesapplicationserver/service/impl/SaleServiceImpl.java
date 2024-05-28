@@ -46,7 +46,7 @@ public class SaleServiceImpl implements SaleService {
 
 
     @Override
-    public ResponseEntity<Object> addSale(SaleDTO dto) throws IOException {
+    public ResponseEntity<String> addSale(SaleDTO dto) throws IOException {
         LOGGER.info("Sale request received");
         AtomicReference<Double> addedPoints = new AtomicReference<>(0.0);
         Optional<Customer> customer = Optional.empty();
@@ -216,5 +216,18 @@ public class SaleServiceImpl implements SaleService {
         Double totalSales = saleList.stream().mapToDouble(sale -> sale.getSaleDetailsList().stream().mapToDouble(SaleDetails::getTotal).sum()).sum();
         Double totalProfit = saleList.stream().mapToDouble(sale -> sale.getSaleDetailsList().stream().mapToDouble(saleDetails -> saleDetails.getQty() * saleDetails.getItem().getExpectedProfit()).sum()).sum();
         return OverViewDTO.builder().totalSales(Double.valueOf(df.format(totalSales))).totalProfit(Double.valueOf(df.format(totalProfit))).totalBills(count).build();
+    }
+
+    @Override
+    public ResponseEntity<String> getAInvoice(String saleId) throws IOException {
+        LOGGER.info("Invoice request received");
+        Sale sale = saleRepository.findById(saleId).orElseThrow(() -> new NotFoundException("Sale not found " + saleId));
+        List<SaleDetails> saleDetailsList = sale.getSaleDetailsList();
+        List<SaleDetailDTO> saleDetailDTOS = new ArrayList<>();
+        saleDetailsList.forEach(saleDetails -> saleDetailDTOS.add(SaleDetailDTO.builder().description(saleDetails.getName()).itemId(saleDetails.getItem().getItemId()).price(saleDetails.getPrice()).quantity(saleDetails.getQty()).size(saleDetails.getSize()).total(saleDetails.getTotal()).build()));
+        InvoiceDTO invoiceDTO = InvoiceDTO.builder().saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailDTOS).cashierName(sale.getCashierName().toUpperCase()).customerId(sale.getCustomer() != null ? sale.getCustomer().getCustomerId().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).build();
+        byte[] invoice = invoiceUtil.getInvoice(invoiceDTO);
+        String s = base64Encoder.encodePdf(invoice);
+        return ResponseEntity.ok().body(s);
     }
 }
