@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface SaleService {
-    ResponseEntity<Object> addSale(SaleDTO sale) throws IOException;
+    ResponseEntity<String> addSale(SaleDTO sale) throws IOException;
 
     SaleDTO getSale(String id);
 
@@ -19,4 +19,8 @@ public interface SaleService {
     void refundSaleItem(RefundDTO dto);
 
     OverViewDTO getOverview();
+
+    ResponseEntity<String> getAInvoice(String id) throws IOException;
+
+    ResponseEntity<String> getLastInvoice() throws IOException;
 }

@@ -14,10 +14,11 @@ import java.util.List;
 @Builder
 public class InvoiceDTO {
     private String saleId;
-    private String customerId;
+    private String customerName;
     private List<SaleDetailDTO> saleDetailsList;
     private String paymentDescription;
     private Double addedPoints;
     private Double totalPoints;
     private String cashierName;
+    private Boolean rePrinted;
 }
