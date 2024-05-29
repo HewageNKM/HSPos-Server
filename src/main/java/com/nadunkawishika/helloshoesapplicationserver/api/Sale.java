@@ -37,8 +37,16 @@ public class Sale {
     @Secured({"ADMIN", "USER"})
     @GetMapping("/invoices/{id}")
     public ResponseEntity<String> getAInvoice(@PathVariable String id) {
-        LOGGER.info("Invoice request received");
+        LOGGER.info("Get a invoice request received");
         return saleService.getAInvoice(id);
+    }
+
+    @SneakyThrows
+    @Secured({"ADMIN", "USER"})
+    @GetMapping("/invoices/last")
+    public ResponseEntity<String> getLastInvoice() {
+        LOGGER.info("Get last invoice request received");
+        return saleService.getLastInvoice();
     }
 
     @Secured({"ADMIN", "USER"})

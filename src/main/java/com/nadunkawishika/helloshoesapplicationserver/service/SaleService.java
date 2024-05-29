@@ -20,6 +20,7 @@ public interface SaleService {
 
     OverViewDTO getOverview();
 
-    ResponseEntity<String> getAInvoice(String saleId) throws IOException;
+    ResponseEntity<String> getAInvoice(String id) throws IOException;
 
+    ResponseEntity<String> getLastInvoice() throws IOException;
 }

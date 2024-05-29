@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -81,7 +80,7 @@ public class SaleServiceImpl implements SaleService {
             stocksRepository.save(stock);
         });
 
-        Sale sale = Sale.builder().saleId(GenerateId.getId("SAL").toLowerCase()).date(LocalDate.now()).paymentDescription(dto.getPaymentDescription()).time(LocalTime.now()).customer(customer.orElse(null)).cashierName(userName).build();
+        Sale sale = Sale.builder().saleId(GenerateId.getId("SAL").toLowerCase()).createdAt(LocalDateTime.now()).paymentDescription(dto.getPaymentDescription()).customer(customer.orElse(null)).cashierName(userName).build();
         saleRepository.save(sale);
 
         saleDetailsList.forEach(saleDTO -> saleDetailsRepository
@@ -102,11 +101,11 @@ public class SaleServiceImpl implements SaleService {
 
         customer.ifPresent(cus -> {
             cus.setRecentPurchaseDateAndTime(LocalDateTime.now());
-           addedPoints.set(dto
-                   .getSaleDetailsList()
-                   .stream()
-                   .mapToDouble(SaleDetailDTO::getTotal)
-                   .sum() / 100.0);
+            addedPoints.set(dto
+                    .getSaleDetailsList()
+                    .stream()
+                    .mapToDouble(SaleDetailDTO::getTotal)
+                    .sum() / 100.0);
             addedPoints.set(Double.valueOf(df.format(addedPoints.get())));
             cus.setTotalPoints(cus.getTotalPoints() + addedPoints.get());
 
@@ -122,7 +121,7 @@ public class SaleServiceImpl implements SaleService {
             System.out.print(cus);
             customerRepository.save(cus);
         });
-        InvoiceDTO invoiceDTO = InvoiceDTO.builder().saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailsList).cashierName(sale.getCashierName().toUpperCase()).customerId(sale.getCustomer() != null ? sale.getCustomer().getCustomerId().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).addedPoints(addedPoints.get()).totalPoints(sale.getCustomer() != null ? sale.getCustomer().getTotalPoints() : null).build();
+        InvoiceDTO invoiceDTO = InvoiceDTO.builder().saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailsList).cashierName(sale.getCashierName().toUpperCase()).customerName(sale.getCustomer() != null ? sale.getCustomer().getName().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).addedPoints(addedPoints.get()).totalPoints(sale.getCustomer() != null ? sale.getCustomer().getTotalPoints() : null).rePrinted(false).build();
         byte[] invoice = invoiceUtil.getInvoice(invoiceDTO);
         String s = base64Encoder.encodePdf(invoice);
         LOGGER.info("Sale request completed {}", sale.getSaleId());
@@ -132,8 +131,8 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public SaleDTO getSale(String id) {
         Sale sale = saleRepository.findById(id).orElseThrow(() -> new NotFoundException("Sale not found " + id));
-        LocalDate date = sale.getDate();
-        long between = ChronoUnit.DAYS.between(date, LocalDate.now());
+        LocalDateTime date = sale.getCreatedAt();
+        long between = ChronoUnit.DAYS.between(date, LocalDateTime.now());
         if (between >= 3) {
             throw new RefundNotAvailableException("Refund Not Available for " + id);
         }
@@ -208,24 +207,36 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public OverViewDTO getOverview() {
         LOGGER.info("Get day overview request received");
-        List<Object[]> billCount = saleRepository.findBillCount();
+        List<Object[]> billCount = saleRepository.findBillCount(LocalDate.now().toString());
         if (billCount.isEmpty()) throw new NotFoundException("No Sales Found");
 
         int count = Integer.parseInt(billCount.getFirst()[0].toString());
-        List<Sale> saleList = saleRepository.getAllTodaySales().orElseThrow(() -> new NotFoundException("No Sales Found"));
+        List<Sale> saleList = saleRepository.getAllTodaySales(LocalDate.now().toString()).orElseThrow(() -> new NotFoundException("No Sales Found"));
         Double totalSales = saleList.stream().mapToDouble(sale -> sale.getSaleDetailsList().stream().mapToDouble(SaleDetails::getTotal).sum()).sum();
         Double totalProfit = saleList.stream().mapToDouble(sale -> sale.getSaleDetailsList().stream().mapToDouble(saleDetails -> saleDetails.getQty() * saleDetails.getItem().getExpectedProfit()).sum()).sum();
         return OverViewDTO.builder().totalSales(Double.valueOf(df.format(totalSales))).totalProfit(Double.valueOf(df.format(totalProfit))).totalBills(count).build();
     }
 
     @Override
-    public ResponseEntity<String> getAInvoice(String saleId) throws IOException {
-        LOGGER.info("Invoice request received");
-        Sale sale = saleRepository.findById(saleId).orElseThrow(() -> new NotFoundException("Sale not found " + saleId));
+    public ResponseEntity<String> getAInvoice(String id){
+        LOGGER.info("Get invoice request received");
+        Sale sale = saleRepository.findById(id).orElseThrow(() -> new NotFoundException("No Sales Found"));
+        return getStringResponseEntity(sale);
+    }
+
+    @Override
+    public ResponseEntity<String> getLastInvoice() throws IOException {
+        LOGGER.info("Last invoice request received");
+        Optional<Sale> sale = saleRepository.findLatestInvoice();
+        if (sale.isEmpty()) throw new NotFoundException("No Sales Found");
+        return getStringResponseEntity(sale.get());
+    }
+
+    private ResponseEntity<String> getStringResponseEntity(Sale sale) {
         List<SaleDetails> saleDetailsList = sale.getSaleDetailsList();
         List<SaleDetailDTO> saleDetailDTOS = new ArrayList<>();
         saleDetailsList.forEach(saleDetails -> saleDetailDTOS.add(SaleDetailDTO.builder().description(saleDetails.getName()).itemId(saleDetails.getItem().getItemId()).price(saleDetails.getPrice()).quantity(saleDetails.getQty()).size(saleDetails.getSize()).total(saleDetails.getTotal()).build()));
-        InvoiceDTO invoiceDTO = InvoiceDTO.builder().saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailDTOS).cashierName(sale.getCashierName().toUpperCase()).customerId(sale.getCustomer() != null ? sale.getCustomer().getCustomerId().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).build();
+        InvoiceDTO invoiceDTO = InvoiceDTO.builder().rePrinted(true).saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailDTOS).cashierName(sale.getCashierName().toUpperCase()).customerName(sale.getCustomer() != null ? sale.getCustomer().getCustomerId().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).build();
         byte[] invoice = invoiceUtil.getInvoice(invoiceDTO);
         String s = base64Encoder.encodePdf(invoice);
         return ResponseEntity.ok().body(s);
