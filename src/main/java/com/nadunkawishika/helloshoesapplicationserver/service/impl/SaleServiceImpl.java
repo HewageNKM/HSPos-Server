@@ -219,7 +219,7 @@ public class SaleServiceImpl implements SaleService {
 
     @Override
     public ResponseEntity<String> getAInvoice(String id){
-        LOGGER.info("Get invoice request received");
+        LOGGER.info("Get invoice request received {}",id);
         Sale sale = saleRepository.findById(id).orElseThrow(() -> new NotFoundException("No Sales Found"));
         return getStringResponseEntity(sale);
     }
@@ -236,7 +236,7 @@ public class SaleServiceImpl implements SaleService {
         List<SaleDetails> saleDetailsList = sale.getSaleDetailsList();
         List<SaleDetailDTO> saleDetailDTOS = new ArrayList<>();
         saleDetailsList.forEach(saleDetails -> saleDetailDTOS.add(SaleDetailDTO.builder().description(saleDetails.getName()).itemId(saleDetails.getItem().getItemId()).price(saleDetails.getPrice()).quantity(saleDetails.getQty()).size(saleDetails.getSize()).total(saleDetails.getTotal()).build()));
-        InvoiceDTO invoiceDTO = InvoiceDTO.builder().rePrinted(true).saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailDTOS).cashierName(sale.getCashierName().toUpperCase()).customerName(sale.getCustomer() != null ? sale.getCustomer().getCustomerId().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).build();
+        InvoiceDTO invoiceDTO = InvoiceDTO.builder().rePrinted(true).saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailDTOS).cashierName(sale.getCashierName().toUpperCase()).customerName(sale.getCustomer() != null ? sale.getCustomer().getName().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).build();
         byte[] invoice = invoiceUtil.getInvoice(invoiceDTO);
         String s = base64Encoder.encodePdf(invoice);
         return ResponseEntity.ok().body(s);
