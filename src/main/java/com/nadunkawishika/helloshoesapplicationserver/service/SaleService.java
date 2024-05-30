@@ -23,4 +23,8 @@ public interface SaleService {
     ResponseEntity<String> getAInvoice(String id) throws IOException;
 
     ResponseEntity<String> getLastInvoice() throws IOException;
+
+    List<SaleDTO> getSales(Integer page, Integer limit);
+
+    List<SaleDTO> searchSales(String search);
 }

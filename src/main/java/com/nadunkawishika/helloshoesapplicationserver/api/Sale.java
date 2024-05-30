@@ -76,4 +76,14 @@ public class Sale {
         LOGGER.info("Get day overview request received");
         return saleService.getOverview();
     }
+
+    @Secured("ADMIN")
+    @GetMapping
+    public List<SaleDTO> getSales(@RequestParam(name = "page",required = false,defaultValue = "0") Integer page,@RequestParam(name = "limit", required = false, defaultValue = "20") Integer limit, @RequestParam(name="search",required = false) String search) {
+        if (search != null){
+            return saleService.searchSales(search);
+        }else{
+            return saleService.getSales(page,limit);
+        }
+    }
 }

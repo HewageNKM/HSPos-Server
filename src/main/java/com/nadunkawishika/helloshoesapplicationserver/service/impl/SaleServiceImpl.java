@@ -13,6 +13,9 @@ import com.nadunkawishika.helloshoesapplicationserver.util.InvoiceUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
@@ -105,7 +109,7 @@ public class SaleServiceImpl implements SaleService {
                     .getSaleDetailsList()
                     .stream()
                     .mapToDouble(SaleDetailDTO::getTotal)
-                    .sum() / 100.0);
+                    .sum() / 1000.0);
             addedPoints.set(Double.valueOf(df.format(addedPoints.get())));
             cus.setTotalPoints(cus.getTotalPoints() + addedPoints.get());
 
@@ -147,9 +151,10 @@ public class SaleServiceImpl implements SaleService {
         for (SaleDetails saleDetails : saleDetailsList) {
             if (saleDetails.getItem().getItemId().equalsIgnoreCase(itemId)) {
                 saleDetailDTOS.add(SaleDetailDTO.builder().description(saleDetails.getName()).itemId(saleDetails.getItem().getItemId()).price(saleDetails.getPrice()).quantity(saleDetails.getQty()).size(saleDetails.getSize()).total(saleDetails.getTotal()).build());
+                return saleDetailDTOS;
             }
         }
-        return saleDetailDTOS;
+        throw new NotFoundException("Item not found " + itemId);
     }
 
     @Override
@@ -218,8 +223,8 @@ public class SaleServiceImpl implements SaleService {
     }
 
     @Override
-    public ResponseEntity<String> getAInvoice(String id){
-        LOGGER.info("Get invoice request received {}",id);
+    public ResponseEntity<String> getAInvoice(String id) {
+        LOGGER.info("Get invoice request received {}", id);
         Sale sale = saleRepository.findById(id).orElseThrow(() -> new NotFoundException("No Sales Found"));
         return getStringResponseEntity(sale);
     }
@@ -232,11 +237,22 @@ public class SaleServiceImpl implements SaleService {
         return getStringResponseEntity(sale.get());
     }
 
+    @Override
+    public List<SaleDTO> getSales(Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        return saleRepository.findAll(pageable).getContent().stream().map(sale -> SaleDTO.builder().saleId(sale.getSaleId()).paymentDescription(sale.getPaymentDescription()).customerId(sale.getCustomer().getName()).createdAt(sale.getCreatedAt()).cashierName(sale.getCashierName()).build()).toList();
+    }
+
+    @Override
+    public List<SaleDTO> searchSales(String search) {
+       return saleRepository.filterSales(search).stream().map(sale -> SaleDTO.builder().saleId(sale.getSaleId()).paymentDescription(sale.getPaymentDescription()).customerId(sale.getCustomer().getName()).createdAt(sale.getCreatedAt()).cashierName(sale.getCashierName()).build()).toList();
+    }
+
     private ResponseEntity<String> getStringResponseEntity(Sale sale) {
         List<SaleDetails> saleDetailsList = sale.getSaleDetailsList();
         List<SaleDetailDTO> saleDetailDTOS = new ArrayList<>();
         saleDetailsList.forEach(saleDetails -> saleDetailDTOS.add(SaleDetailDTO.builder().description(saleDetails.getName()).itemId(saleDetails.getItem().getItemId()).price(saleDetails.getPrice()).quantity(saleDetails.getQty()).size(saleDetails.getSize()).total(saleDetails.getTotal()).build()));
-        InvoiceDTO invoiceDTO = InvoiceDTO.builder().rePrinted(true).saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailDTOS).cashierName(sale.getCashierName().toUpperCase()).customerName(sale.getCustomer() != null ? sale.getCustomer().getName().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).build();
+        InvoiceDTO invoiceDTO = InvoiceDTO.builder().rePrinted(true).saleId(sale.getSaleId().toUpperCase()).saleDetailsList(saleDetailDTOS).cashierName(sale.getCashierName().toUpperCase()).customerName(sale.getCustomer() != null ? sale.getCustomer().getName().toUpperCase() : null).paymentDescription(sale.getPaymentDescription()).totalPoints(sale.getCustomer()!=null?sale.getCustomer().getTotalPoints():null).addedPoints(sale.getSaleDetailsList().stream().map(SaleDetails::getTotal).reduce(0.0,Double::sum)/1000.0).build();
         byte[] invoice = invoiceUtil.getInvoice(invoiceDTO);
         String s = base64Encoder.encodePdf(invoice);
         return ResponseEntity.ok().body(s);

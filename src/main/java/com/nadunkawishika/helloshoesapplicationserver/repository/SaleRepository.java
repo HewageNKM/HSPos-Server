@@ -18,4 +18,7 @@ public interface SaleRepository extends JpaRepository<Sale, String> {
 
     @Query(value = "SELECT * FROM sale ORDER BY created_at DESC LIMIT 1;", nativeQuery = true)
     Optional<Sale> findLatestInvoice();
+
+    @Query(value = "SELECT * FROM sale WHERE sale_id LIKE %?1% OR cashier_name LIKE %?1% OR customer_id LIKE %?1% OR payment_description LIKE %?1% OR created_at LIKE %?1%", nativeQuery = true)
+    List<Sale> filterSales(String search);
 }
