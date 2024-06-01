@@ -8,7 +8,6 @@ import com.nadunkawishika.helloshoesapplicationserver.repository.EmployeeReposit
 import com.nadunkawishika.helloshoesapplicationserver.service.EmployeeService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import com.nadunkawishika.helloshoesapplicationserver.util.Base64Encoder;
-import com.nadunkawishika.helloshoesapplicationserver.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,6 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
-    private final Mapper mapper;
     private final Logger LOGGER = LoggerFactory.getLogger(EmployeeServiceImpl.class);
     private final EmployeeRepository employeeRepository;
     private final Base64Encoder base64Encoder;
@@ -36,15 +34,54 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDTO> getEmployees(int page, int limit) {
         LOGGER.info("Get All Employees Request");
         Pageable pageable = PageRequest.of(page, limit);
-        return mapper.toEmployeesEntityToDTOs(employeeRepository.findAll(pageable).getContent());
+        return employeeRepository.findAll(pageable).getContent().stream().map(employee ->
+                        EmployeeDTO
+                                .builder()
+                                .attachBranch(employee.getAttachBranch())
+                                .city(employee.getCity()).contact(employee.getContact())
+                                .designation(employee.getDesignation())
+                                .dob(employee.getDob())
+                                .doj(employee.getDoj())
+                                .guardianContact(employee.getGuardianContact())
+                                .guardianName(employee.getGuardianName())
+                                .image(employee.getImage())
+                                .email(employee.getEmail())
+                                .employeeId(employee.getEmployeeId())
+                                .postalCode(employee.getPostalCode())
+                                .lane(employee.getLane())
+                                .name(employee.getName())
+                                .role(employee.getRole())
+                                .gender(employee.getGender())
+                                .state(employee.getState())
+                                .status(employee.getStatus())
+                                .build()
+                )
+                .toList();
     }
 
     @Override
     public EmployeeDTO getEmployee(String id) {
-        return mapper.toEmployeeEntityToDTO(employeeRepository.findById(id).orElseThrow(() -> {
-            LOGGER.error("Employee Not Found: {}", id);
-            return new NotFoundException("Employee Not Found");
-        }));
+        return employeeRepository.findById(id).map(employee -> EmployeeDTO
+                        .builder()
+                        .attachBranch(employee.getAttachBranch())
+                        .city(employee.getCity()).contact(employee.getContact())
+                        .designation(employee.getDesignation())
+                        .dob(employee.getDob())
+                        .doj(employee.getDoj())
+                        .guardianContact(employee.getGuardianContact())
+                        .guardianName(employee.getGuardianName())
+                        .image(employee.getImage())
+                        .email(employee.getEmail())
+                        .employeeId(employee.getEmployeeId())
+                        .postalCode(employee.getPostalCode())
+                        .lane(employee.getLane())
+                        .name(employee.getName())
+                        .role(employee.getRole())
+                        .gender(employee.getGender())
+                        .state(employee.getState())
+                        .status(employee.getStatus())
+                        .build())
+                .orElseThrow(() -> new NotFoundException("Employee Not Found"));
     }
 
     @Override
@@ -131,6 +168,28 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<EmployeeDTO> filterEmployees(String pattern) {
         LOGGER.info("Filter Employees Request: {}", pattern);
-        return mapper.toEmployeesEntityToDTOs(employeeRepository.filterEmployee(pattern));
+        return employeeRepository.filterEmployee(pattern).stream().map(employee ->
+                        EmployeeDTO
+                                .builder()
+                                .attachBranch(employee.getAttachBranch())
+                                .city(employee.getCity()).contact(employee.getContact())
+                                .designation(employee.getDesignation())
+                                .dob(employee.getDob())
+                                .doj(employee.getDoj())
+                                .guardianContact(employee.getGuardianContact())
+                                .guardianName(employee.getGuardianName())
+                                .image(employee.getImage())
+                                .email(employee.getEmail())
+                                .employeeId(employee.getEmployeeId())
+                                .postalCode(employee.getPostalCode())
+                                .lane(employee.getLane())
+                                .name(employee.getName())
+                                .role(employee.getRole())
+                                .gender(employee.getGender())
+                                .state(employee.getState())
+                                .status(employee.getStatus())
+                                .build()
+                )
+                .toList();
     }
 }

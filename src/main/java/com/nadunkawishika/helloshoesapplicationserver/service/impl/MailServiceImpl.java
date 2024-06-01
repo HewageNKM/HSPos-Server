@@ -42,7 +42,7 @@ public class MailServiceImpl implements MailService {
     @Override
     public String getOTPMessage(String otp) {
         return "We have sent you a one-time password (OTP) to verify your identity.\n\n" +
-                "A one-time password (OTP) is a temporary code that is used for security purposes. It is typically valid for a short period of time and can only be used once. OTPs are commonly used to verify your identity when logging in to an account or making a transaction online.\n\n" +
+                "A one-time password (OTP) is a temporary code that is used for security purposes. It is valid for a short period of time and can only be used once.\n\n" +
                 "Please use the following OTP to complete your request: " +
                 otp +
                 "\n\n" +

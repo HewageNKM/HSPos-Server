@@ -8,14 +8,11 @@ import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions
 import com.nadunkawishika.helloshoesapplicationserver.repository.CustomerRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.CustomerService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
-import com.nadunkawishika.helloshoesapplicationserver.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,26 +27,21 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final Logger LOGGER = LoggerFactory.getLogger(CustomerServiceImpl.class);
-    private final Mapper modelMapper = new Mapper();
 
     public List<CustomerDTO> getCustomers(int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
         LOGGER.info("Get All Customers Request");
-        return modelMapper.toCustomersEntityToDTOs(customerRepository.findAll(pageable).getContent());
+        Pageable pageable = PageRequest.of(page, limit);
+        return customerRepository.findAll(pageable).getContent().stream().map(customer -> CustomerDTO.builder().customerId(customer.getCustomerId()).doj(customer.getDoj()).gender(customer.getGender().toString()).name(customer.getName()).lane(customer.getLane()).city(customer.getCity()).state(customer.getState()).postalCode(customer.getPostalCode()).contact(customer.getContact()).email(customer.getEmail()).recentPurchaseDateAndTime(customer.getRecentPurchaseDateAndTime()).totalPoints(customer.getTotalPoints()).level(customer.getLevel()).build()).toList();
     }
 
     @Override
     public CustomerDTO getCustomer(String id) {
-        return modelMapper.toCustomerEntityToDTO(customerRepository.findByCustomerIdOrEmailOrContact(id,id,id).orElseThrow(() -> {
-            LOGGER.error("Customer Not Found: {}", id);
-            return new NotFoundException("Customer Not Found");
-        }));
+        return customerRepository.findByCustomerIdOrEmailOrContact(id, id, id).map(customer -> CustomerDTO.builder().customerId(customer.getCustomerId()).gender(customer.getGender().toString()).doj(customer.getDoj()).name(customer.getName()).lane(customer.getLane()).city(customer.getCity()).state(customer.getState()).postalCode(customer.getPostalCode()).contact(customer.getContact()).email(customer.getEmail()).recentPurchaseDateAndTime(customer.getRecentPurchaseDateAndTime()).totalPoints(customer.getTotalPoints()).level(customer.getLevel()).build()).orElseThrow(() -> new NotFoundException("Customer Not Found"));
     }
 
     @Override
-    public List<CustomerDTO> filterCustomers(String pattern, int page, int limit) {
-        Pageable pageable = PageRequest.of(page, limit);
-        return modelMapper.toCustomersEntityToDTOs(customerRepository.filterCustomers(pattern));
+    public List<CustomerDTO> filterCustomers(String pattern) {
+        return customerRepository.filterCustomers(pattern).stream().map(customer -> CustomerDTO.builder().customerId(customer.getCustomerId()).doj(customer.getDoj()).gender(customer.getGender().toString()).name(customer.getName()).lane(customer.getLane()).city(customer.getCity()).state(customer.getState()).postalCode(customer.getPostalCode()).contact(customer.getContact()).email(customer.getEmail()).recentPurchaseDateAndTime(customer.getRecentPurchaseDateAndTime()).totalPoints(customer.getTotalPoints()).level(customer.getLevel()).build()).toList();
     }
 
     @Override

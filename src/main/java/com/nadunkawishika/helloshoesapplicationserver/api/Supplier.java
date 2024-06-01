@@ -15,7 +15,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/suppliers")
 @RequiredArgsConstructor
-@CrossOrigin
 @EnableMethodSecurity(securedEnabled = true)
 public class Supplier {
     private final SupplierService supplierService;

@@ -69,9 +69,9 @@ public class Inventory {
 
     @Secured({"ADMIN", "USER"})
     @GetMapping("/filter/{pattern}")
-    public List<ItemDTO> filterItems(@PathVariable String pattern, @RequestParam(name = "availability") Boolean availability) {
+    public List<ItemDTO> filterItems(@PathVariable String pattern) {
         LOGGER.info("Filter Items Request: {}", pattern);
-        return inventoryService.filterItems(pattern, availability);
+        return inventoryService.filterItems(pattern);
     }
 
     @Secured({"ADMIN", "USER"})

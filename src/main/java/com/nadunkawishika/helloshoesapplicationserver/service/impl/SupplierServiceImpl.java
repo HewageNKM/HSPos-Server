@@ -3,11 +3,9 @@ package com.nadunkawishika.helloshoesapplicationserver.service.impl;
 import com.nadunkawishika.helloshoesapplicationserver.dto.SupplierDTO;
 import com.nadunkawishika.helloshoesapplicationserver.entity.Supplier;
 import com.nadunkawishika.helloshoesapplicationserver.exception.customExceptions.NotFoundException;
-import com.nadunkawishika.helloshoesapplicationserver.repository.InventoryRepository;
 import com.nadunkawishika.helloshoesapplicationserver.repository.SupplierRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.SupplierService;
 import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
-import com.nadunkawishika.helloshoesapplicationserver.util.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,43 +15,72 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class SupplierServiceImpl implements SupplierService {
     private final SupplierRepository supplierRepository;
-    private final InventoryRepository itemRepository;
-    private final Mapper mapper;
     private final Logger LOGGER = LoggerFactory.getLogger(SupplierServiceImpl.class);
 
     @Override
     public List<SupplierDTO> getSuppliers(int page, int limit) {
         LOGGER.info("Get All Suppliers Request");
         Pageable pageable = PageRequest.of(page, limit);
-        return mapper.toSuppliersEntityToDTOs(supplierRepository.findAll(pageable).getContent());
+        return supplierRepository.findAll(pageable).getContent().stream().map(supplier ->
+                        SupplierDTO
+                                .builder()
+                                .supplierId(supplier.getSupplierId())
+                                .name(supplier.getName())
+                                .lane(supplier.getLane())
+                                .city(supplier.getCity())
+                                .state(supplier.getState())
+                                .postalCode(supplier.getPostalCode())
+                                .country(supplier.getCountry())
+                                .contactNo1(supplier.getContactNo1())
+                                .contactNo2(supplier.getContactNo2())
+                                .email(supplier.getEmail())
+                                .build())
+                .toList();
     }
 
     @Override
     public SupplierDTO getSupplier(String id) {
-        Optional<Supplier> supplier = supplierRepository.findById(id);
-        if (supplier.isPresent()) {
-            LOGGER.info("Supplier Found: {}", supplier.get());
-            return mapper.toSupplierEntityToDTO(supplier.get());
-        } else {
-            LOGGER.error("Supplier Not Found: {}", id);
-            throw new NotFoundException("Supplier Not Found " + id);
-        }
+        return supplierRepository.findById(id).map(supplier -> SupplierDTO
+                .builder()
+                .supplierId(supplier.getSupplierId())
+                .name(supplier.getName())
+                .lane(supplier.getLane())
+                .city(supplier.getCity())
+                .state(supplier.getState())
+                .postalCode(supplier.getPostalCode())
+                .country(supplier.getCountry())
+                .contactNo1(supplier.getContactNo1())
+                .contactNo2(supplier.getContactNo2())
+                .email(supplier.getEmail())
+                .build()
+        ).orElseThrow(() -> new NotFoundException("Supplier Not Found" + id));
     }
 
     @Override
     public List<SupplierDTO> filterSuppliers(String pattern) {
         pattern = pattern.toLowerCase();
         LOGGER.info("Filter Suppliers Request: {}", pattern);
-        List<Supplier> suppliers = supplierRepository.filterByPattern(pattern);
-        LOGGER.info("Filtered Suppliers ID");
-        return mapper.toSuppliersEntityToDTOs(suppliers);
+        return supplierRepository.filterByPattern(pattern).stream().map(supplier ->
+                        SupplierDTO
+                                .builder()
+                                .supplierId(supplier.getSupplierId())
+                                .name(supplier.getName())
+                                .lane(supplier.getLane())
+                                .city(supplier.getCity())
+                                .state(supplier.getState())
+                                .postalCode(supplier.getPostalCode())
+                                .country(supplier.getCountry())
+                                .contactNo1(supplier.getContactNo1())
+                                .contactNo2(supplier.getContactNo2())
+                                .email(supplier.getEmail())
+                                .build())
+                .toList();
     }
 
     @Override
@@ -97,13 +124,6 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public void deleteSupplier(String id) {
-        Optional<Supplier> supplier = supplierRepository.findById(id);
-        if (supplier.isPresent()) {
-            supplierRepository.deleteById(id);
-            LOGGER.info("Supplier Deleted: {}", supplier.get());
-        } else {
-            LOGGER.error("Supplier Not Found: {}", id);
-            throw new NotFoundException("Supplier Not Found" + id);
-        }
+        supplierRepository.deleteById(id);
     }
 }
