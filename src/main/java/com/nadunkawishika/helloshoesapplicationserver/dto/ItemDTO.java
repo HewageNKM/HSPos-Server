@@ -1,18 +1,11 @@
 package com.nadunkawishika.helloshoesapplicationserver.dto;
 
-import com.nadunkawishika.helloshoesapplicationserver.entity.Sale;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Stock;
-import com.nadunkawishika.helloshoesapplicationserver.entity.Supplier;
-import com.nadunkawishika.helloshoesapplicationserver.enums.Gender;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
