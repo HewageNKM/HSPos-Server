@@ -49,7 +49,7 @@ public class SaleServiceImpl implements SaleService {
 
 
     @Override
-    public ResponseEntity<String> addSale(SaleDTO dto) throws IOException {
+    public ResponseEntity<String> addSale(SaleDTO dto) {
         LOGGER.info("Sale request received");
         AtomicReference<Double> addedPoints = new AtomicReference<>(0.0);
         Optional<Customer> customer = Optional.empty();

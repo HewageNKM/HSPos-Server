@@ -12,11 +12,10 @@ import com.nadunkawishika.helloshoesapplicationserver.repository.SaleDetailsRepo
 import com.nadunkawishika.helloshoesapplicationserver.repository.StocksRepository;
 import com.nadunkawishika.helloshoesapplicationserver.repository.SupplierRepository;
 import com.nadunkawishika.helloshoesapplicationserver.service.InventoryService;
-import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import com.nadunkawishika.helloshoesapplicationserver.util.Base64Encoder;
+import com.nadunkawishika.helloshoesapplicationserver.util.GenerateId;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,12 +44,21 @@ public class InventoryServiceImpl implements InventoryService {
     public List<ItemDTO> getAllByAvailability(Boolean availability, int page, int limit) {
         LOGGER.info("Get All Items Request");
         Pageable pageable = PageRequest.of(page, limit);
-        List<ItemDTO> itemDTOS = new ArrayList<>();
-        Page<Item> byAvailability = inventoryRepository.findByAvailability(availability, pageable);
-        for (Item item : byAvailability) {
-            getItemDTOs(itemDTOS, item);
-        }
-        return itemDTOS;
+        return inventoryRepository.findByAvailability(availability, pageable).stream().map(item -> ItemDTO
+                .builder()
+                .itemId(item.getItemId())
+                .description(item.getDescription())
+                .image(item.getImage())
+                .expectedProfit(item.getExpectedProfit())
+                .profitMargin(item.getProfitMargin())
+                .quantity(item.getQuantity())
+                .supplierName(item.getSupplierName())
+                .supplierId(item.getSupplier().getSupplierId())
+                .buyingPrice(item.getBuyingPrice())
+                .sellingPrice(item.getSellingPrice())
+                .category(item.getCategory())
+                .build()
+        ).toList();
     }
 
     private void getItemDTOs(List<ItemDTO> itemDTOS, Item item) {
@@ -150,13 +157,22 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public List<ItemDTO> filterItems(String pattern, Boolean availability) {
-        List<ItemDTO> itemDTOS = new ArrayList<>();
-        for (Item item : inventoryRepository.filterItems(pattern)) {
-            if (item.getAvailability()) getItemDTOs(itemDTOS, item);
-        }
-        LOGGER.info("Filtered Items");
-        return itemDTOS;
+    public List<ItemDTO> filterItems(String pattern) {
+        return inventoryRepository.filterItems(pattern).stream().map(item -> ItemDTO
+                .builder()
+                .itemId(item.getItemId())
+                .description(item.getDescription())
+                .image(item.getImage())
+                .expectedProfit(item.getExpectedProfit())
+                .profitMargin(item.getProfitMargin())
+                .quantity(item.getQuantity())
+                .supplierName(item.getSupplierName())
+                .supplierId(item.getSupplier().getSupplierId())
+                .buyingPrice(item.getBuyingPrice())
+                .sellingPrice(item.getSellingPrice())
+                .category(item.getCategory())
+                .build()
+        ).toList();
     }
 
     @Override
@@ -183,9 +199,21 @@ public class InventoryServiceImpl implements InventoryService {
     public List<CustomDTO> getAllStocks(int page, int limit) {
         LOGGER.info("Get All Stocks Request");
         Pageable pageable = PageRequest.of(page, limit);
-        Page<Stock> all = stocksRepository.findAll(pageable);
-        List<Stock> stocks = all.getContent();
-        return getCustomDTOS(stocks);
+        return stocksRepository.findAll(pageable).getContent().stream().map(stock -> CustomDTO
+                .builder()
+                .itemId(stock.getItem().getItemId())
+                .stockId(stock.getStockId())
+                .description(stock.getItem().getDescription())
+                .supplierId(stock.getItem().getSupplier().getSupplierId())
+                .supplierName(stock.getItem().getSupplierName())
+                .size40(stock.getSize40())
+                .size41(stock.getSize41())
+                .size42(stock.getSize42())
+                .size43(stock.getSize43())
+                .size44(stock.getSize44())
+                .size45(stock.getSize45())
+                .build()
+        ).toList();
     }
 
     @Override
@@ -209,52 +237,27 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public List<CustomDTO> filterStocks(String pattern) {
         LOGGER.info("Filtered Stocks");
-        List<Object[]> objects = stocksRepository.filterStocks(pattern);
-        List<CustomDTO> customDTOS = new ArrayList<>();
-        for (Object[] object : objects) {
-            customDTOS.add(CustomDTO
-                    .builder()
-                    .itemId(object[0].toString())
-                    .stockId(object[1].toString())
-                    .description(object[2].toString())
-                    .supplierId(object[3].toString())
-                    .supplierName(object[4].toString())
-                    .size40(Integer.parseInt(object[5].toString()))
-                    .size41(Integer.parseInt(object[6].toString()))
-                    .size42(Integer.parseInt(object[7].toString()))
-                    .size43(Integer.parseInt(object[8].toString()))
-                    .size44(Integer.parseInt(object[9].toString()))
-                    .size45(Integer.parseInt(object[10].toString()))
-                    .build());
-        }
-        return customDTOS;
-    }
+        return stocksRepository.filterStocks(pattern).stream().map(object -> CustomDTO
+                        .builder()
+                        .itemId(object[0].toString())
+                        .stockId(object[1].toString())
+                        .description(object[2].toString())
+                        .supplierId(object[3].toString())
+                        .supplierName(object[4].toString())
+                        .size40(Integer.parseInt(object[5].toString()))
+                        .size41(Integer.parseInt(object[6].toString()))
+                        .size42(Integer.parseInt(object[7].toString()))
+                        .size43(Integer.parseInt(object[8].toString()))
+                        .size44(Integer.parseInt(object[9].toString()))
+                        .size45(Integer.parseInt(object[10].toString()))
+                        .build())
+                .toList();
 
-    private List<CustomDTO> getCustomDTOS(List<Stock> stocks) {
-        List<CustomDTO> customDTOS = new ArrayList<>();
-        for (Stock stock : stocks) {
-            customDTOS.add(CustomDTO
-                    .builder()
-                    .itemId(stock.getItem().getItemId())
-                    .stockId(stock.getStockId())
-                    .description(stock.getItem().getDescription())
-                    .supplierId(stock.getItem().getSupplier().getSupplierId())
-                    .supplierName(stock.getItem().getSupplierName())
-                    .size40(stock.getSize40())
-                    .size41(stock.getSize41())
-                    .size42(stock.getSize42())
-                    .size43(stock.getSize43())
-                    .size44(stock.getSize44())
-                    .size45(stock.getSize45())
-                    .build());
-        }
-        return customDTOS;
     }
 
     @Override
     public CustomDTO getStock(String id) {
-        Stock stock = stocksRepository.findByItemId(id).orElseThrow(() -> new NotFoundException("Stock Not Found"));
-        return CustomDTO
+        return stocksRepository.findByItemId(id).map(stock -> CustomDTO
                 .builder()
                 .size40(stock.getSize40())
                 .size41(stock.getSize41())
@@ -263,7 +266,7 @@ public class InventoryServiceImpl implements InventoryService {
                 .size44(stock.getSize44())
                 .size45(stock.getSize45())
                 .itemId(stock.getItem().getItemId())
-                .build();
+                .build()).orElseThrow(() -> new NotFoundException("Stock Not Found"));
     }
 
     @Override

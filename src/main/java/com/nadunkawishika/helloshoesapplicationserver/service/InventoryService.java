@@ -16,7 +16,7 @@ public interface InventoryService {
 
     void deleteItem(String id);
 
-    List<ItemDTO> filterItems(String pattern, Boolean availability);
+    List<ItemDTO> filterItems(String pattern);
 
     ItemDTO getItem(String id);
 

@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/customers")
-@CrossOrigin
 @RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true)
 public class Customer {
@@ -22,21 +21,20 @@ public class Customer {
     private final Logger LOGGER = LoggerFactory.getLogger(Customer.class);
 
 
-
-    @Secured({"ADMIN","USER"})
+    @Secured({"ADMIN", "USER"})
     @GetMapping
-    public List<CustomerDTO> getCustomers(@RequestParam(required = false) String pattern,@RequestParam(name = "page",defaultValue = "0") int page,@RequestParam(name = "limit",defaultValue = "20") int limit){
+    public List<CustomerDTO> getCustomers(@RequestParam(required = false) String pattern, @RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "limit", defaultValue = "20") int limit) {
         if (pattern != null) {
             LOGGER.info("Filter Customers Request: {}", pattern);
-            return customerService.filterCustomers(pattern,page,limit);
+            return customerService.filterCustomers(pattern);
         } else {
             LOGGER.info("Get All Customers Request");
-            return customerService.getCustomers(page,limit);
+            return customerService.getCustomers(page, limit);
         }
 
     }
 
-    @Secured({"ADMIN","USER"})
+    @Secured({"ADMIN", "USER"})
     @GetMapping("/{id}")
     public CustomerDTO getCustomer(@PathVariable String id) {
         LOGGER.info("Get Customer Request: {}", id);

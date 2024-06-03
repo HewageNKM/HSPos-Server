@@ -9,7 +9,7 @@ public interface CustomerService {
 
     CustomerDTO getCustomer(String id);
 
-    List<CustomerDTO> filterCustomers(String pattern, int page, int limit);
+    List<CustomerDTO> filterCustomers(String pattern);
 
     void updateCustomer(String id, CustomerDTO dto);
 
