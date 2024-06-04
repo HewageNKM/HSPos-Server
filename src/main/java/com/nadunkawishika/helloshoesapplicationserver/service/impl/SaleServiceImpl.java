@@ -240,12 +240,12 @@ public class SaleServiceImpl implements SaleService {
     @Override
     public List<SaleDTO> getSales(Integer page, Integer limit) {
         Pageable pageable = PageRequest.of(page, limit);
-        return saleRepository.findAll(pageable).getContent().stream().map(sale -> SaleDTO.builder().saleId(sale.getSaleId()).paymentDescription(sale.getPaymentDescription()).customerId(sale.getCustomer().getName()).createdAt(sale.getCreatedAt()).cashierName(sale.getCashierName()).build()).toList();
+        return saleRepository.findAll(pageable).getContent().stream().map(sale -> SaleDTO.builder().saleId(sale.getSaleId()).paymentDescription(sale.getPaymentDescription()).customerId(sale.getCustomer()!=null?sale.getCustomer().getName():"No Customer").createdAt(sale.getCreatedAt()).cashierName(sale.getCashierName()).build()).toList();
     }
 
     @Override
     public List<SaleDTO> searchSales(String search) {
-       return saleRepository.filterSales(search).stream().map(sale -> SaleDTO.builder().saleId(sale.getSaleId()).paymentDescription(sale.getPaymentDescription()).customerId(sale.getCustomer().getName()).createdAt(sale.getCreatedAt()).cashierName(sale.getCashierName()).build()).toList();
+       return saleRepository.filterSales(search).stream().map(sale -> SaleDTO.builder().saleId(sale.getSaleId()).paymentDescription(sale.getPaymentDescription()).customerId(sale.getCustomer()!=null?sale.getCustomer().getName():"No Customer").createdAt(sale.getCreatedAt()).cashierName(sale.getCashierName()).build()).toList();
     }
 
     private ResponseEntity<String> getStringResponseEntity(Sale sale) {
